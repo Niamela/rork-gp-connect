@@ -15,8 +15,8 @@ export const db = {
     findById: (id: string) => {
       return users.get(id) || null;
     },
-    findByEmail: (email: string) => {
-      return Array.from(users.values()).find(u => u.email === email) || null;
+    findByContact: (contact: string) => {
+      return Array.from(users.values()).find(u => u.contact === contact) || null;
     },
     update: (id: string, updates: Partial<UserProfile>) => {
       const user = users.get(id);

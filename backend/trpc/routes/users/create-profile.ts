@@ -5,10 +5,10 @@ import { db } from '../../../db/storage';
 export const createProfileProcedure = publicProcedure
   .input(CreateUserProfileSchema)
   .mutation(async ({ input }) => {
-    const existingUser = db.users.findByEmail(input.email);
+    const existingUser = db.users.findByContact(input.contact);
     
     if (existingUser) {
-      throw new Error('Un utilisateur avec cet email existe déjà');
+      throw new Error('Un utilisateur avec ce contact existe déjà');
     }
 
     const user = db.users.create({

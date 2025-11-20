@@ -11,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { LogIn, UserPlus, Mail, Lock, MapPin, User as UserIcon } from 'lucide-react-native';
+import { LogIn, UserPlus, Phone, MapPin, User as UserIcon } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
@@ -24,25 +24,24 @@ export default function AuthScreen() {
   const router = useRouter();
   const { saveUserProfile } = useUser();
   const [mode, setMode] = useState<AuthMode>('login');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [contact, setContact] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [country, setCountry] = useState('');
   const [loading, setLoading] = useState(false);
 
   const loginQuery = trpc.users.login.useQuery(
-    { email, password },
+    { contact },
     { enabled: false }
   );
 
   const createProfileMutation = trpc.users.createProfile.useMutation();
 
   const handleLogin = async () => {
-    console.log('[Auth] Login attempt with email:', email);
+    console.log('[Auth] Login attempt with contact:', contact);
     
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Erreur', 'Veuillez entrer votre email et mot de passe');
+    if (!contact.trim()) {
+      Alert.alert('Erreur', 'Veuillez entrer votre email ou téléphone');
       return;
     }
 
@@ -84,13 +83,8 @@ export default function AuthScreen() {
   const handleSignup = async () => {
     console.log('[Auth] Signup attempt');
     
-    if (!email.trim() || !password.trim() || !firstName.trim() || !lastName.trim() || !country.trim()) {
+    if (!contact.trim() || !firstName.trim() || !lastName.trim() || !country.trim()) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs');
-      return;
-    }
-
-    if (password.length < 6) {
-      Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 6 caractères');
       return;
     }
 
@@ -100,8 +94,7 @@ export default function AuthScreen() {
         firstName,
         lastName,
         country,
-        email,
-        password,
+        contact,
         isGP: false,
       });
       
@@ -169,29 +162,15 @@ export default function AuthScreen() {
           <View style={styles.form}>
             <View style={styles.inputContainer}>
               <View style={styles.inputIconContainer}>
-                <Mail size={20} color="#FF6B35" />
+                <Phone size={20} color="#FF6B35" />
               </View>
               <TextInput
                 style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
+                placeholder="Email ou Téléphone"
+                value={contact}
+                onChangeText={setContact}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                placeholderTextColor="#999"
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <View style={styles.inputIconContainer}>
-                <Lock size={20} color="#FF6B35" />
-              </View>
-              <TextInput
-                style={styles.input}
-                placeholder="Mot de passe"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
                 placeholderTextColor="#999"
               />
             </View>
@@ -274,7 +253,7 @@ export default function AuthScreen() {
             {mode === 'login' && (
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>
-                  Utilisez l&apos;email et le mot de passe que vous avez utilisés lors de l&apos;inscription.
+                  Utilisez l&apos;email ou le téléphone que vous avez utilisé lors de l&apos;inscription.
                 </Text>
               </View>
             )}

@@ -20,8 +20,7 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   country: string;
-  email: string;
-  password: string;
+  contact: string;
   isVerified: boolean;
   createdAt: string;
   isGP: boolean;

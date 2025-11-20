@@ -21,11 +21,11 @@ export default function EditProfileScreen() {
   const [firstName, setFirstName] = useState(userProfile?.firstName || '');
   const [lastName, setLastName] = useState(userProfile?.lastName || '');
   const [country, setCountry] = useState(userProfile?.country || '');
-  const [email, setEmail] = useState(userProfile?.email || '');
+  const [contact, setContact] = useState(userProfile?.contact || '');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
-    if (!firstName.trim() || !lastName.trim() || !country.trim() || !email.trim()) {
+    if (!firstName.trim() || !lastName.trim() || !country.trim() || !contact.trim()) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs');
       return;
     }
@@ -36,7 +36,7 @@ export default function EditProfileScreen() {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         country: country.trim(),
-        email: email.trim(),
+        contact: contact.trim(),
       });
       
       if (result) {
@@ -109,12 +109,12 @@ export default function EditProfileScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email *</Text>
+            <Text style={styles.label}>Contact *</Text>
             <TextInput
               style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="email@example.com"
+              value={contact}
+              onChangeText={setContact}
+              placeholder="Email ou téléphone"
               placeholderTextColor="#ADB5BD"
               keyboardType="email-address"
               autoCapitalize="none"
