@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Stack } from 'expo-router';
-import { Mail, Phone, MapPin, Send } from 'lucide-react-native';
+import { Mail, Send } from 'lucide-react-native';
 
 export default function ContactScreen() {
   const [name, setName] = useState('');
@@ -47,40 +47,6 @@ export default function ContactScreen() {
         </View>
 
         <View style={styles.content}>
-          <View style={styles.infoSection}>
-            <Text style={styles.sectionTitle}>Nos coordonnées</Text>
-            
-            <View style={styles.infoCard}>
-              <View style={styles.infoIcon}>
-                <Mail size={20} color="#FF6B35" />
-              </View>
-              <View style={styles.infoText}>
-                <Text style={styles.infoLabel}>Email</Text>
-                <Text style={styles.infoValue}>contact@gpconnect.com</Text>
-              </View>
-            </View>
-
-            <View style={styles.infoCard}>
-              <View style={styles.infoIcon}>
-                <Phone size={20} color="#FF6B35" />
-              </View>
-              <View style={styles.infoText}>
-                <Text style={styles.infoLabel}>Téléphone</Text>
-                <Text style={styles.infoValue}>+33 1 XX XX XX XX</Text>
-              </View>
-            </View>
-
-            <View style={styles.infoCard}>
-              <View style={styles.infoIcon}>
-                <MapPin size={20} color="#FF6B35" />
-              </View>
-              <View style={styles.infoText}>
-                <Text style={styles.infoLabel}>Adresse</Text>
-                <Text style={styles.infoValue}>Paris, France</Text>
-              </View>
-            </View>
-          </View>
-
           <View style={styles.formSection}>
             <Text style={styles.sectionTitle}>Envoyez-nous un message</Text>
 
@@ -186,49 +152,11 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
   },
-  infoSection: {
-    marginBottom: 32,
-  },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#2C3E50',
     marginBottom: 16,
-  },
-  infoCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  infoIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFF5F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  infoText: {
-    flex: 1,
-  },
-  infoLabel: {
-    fontSize: 12,
-    color: '#6C757D',
-    marginBottom: 4,
-  },
-  infoValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#2C3E50',
   },
   formSection: {
     backgroundColor: 'white',
