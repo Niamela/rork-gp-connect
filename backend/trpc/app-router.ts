@@ -19,6 +19,10 @@ import getConversationsProcedure from "./routes/messages/get-conversations";
 import getMessagesProcedure from "./routes/messages/get-messages";
 import sendMessageProcedure from "./routes/messages/send-message";
 import markAsReadProcedure from "./routes/messages/mark-as-read";
+import createShipmentProcedure from "./routes/shipments/create-shipment";
+import updateShipmentStatusProcedure from "./routes/shipments/update-status";
+import getUserShipmentsProcedure from "./routes/shipments/get-user-shipments";
+import getGpShipmentsProcedure from "./routes/shipments/get-gp-shipments";
 
 export const appRouter = createTRPCRouter({
   example: createTRPCRouter({
@@ -50,6 +54,12 @@ export const appRouter = createTRPCRouter({
     getMessages: getMessagesProcedure,
     sendMessage: sendMessageProcedure,
     markAsRead: markAsReadProcedure,
+  }),
+  shipments: createTRPCRouter({
+    create: createShipmentProcedure,
+    updateStatus: updateShipmentStatusProcedure,
+    getUserShipments: getUserShipmentsProcedure,
+    getGpShipments: getGpShipmentsProcedure,
   }),
 });
 

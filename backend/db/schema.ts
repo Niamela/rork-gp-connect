@@ -99,7 +99,49 @@ export type UpdateUserProfile = z.infer<typeof UpdateUserProfileSchema>;
 export type CreateTravelAnnouncement = z.infer<typeof CreateTravelAnnouncementSchema>;
 export type UpdateTravelAnnouncement = z.infer<typeof UpdateTravelAnnouncementSchema>;
 export type CreateRequestAnnouncement = z.infer<typeof CreateRequestAnnouncementSchema>;
+export const ShipmentStatusSchema = z.enum([
+  'pending',
+  'accepted',
+  'in_transit',
+  'customs',
+  'out_for_delivery',
+  'delivered',
+  'cancelled'
+]);
+
+export const TrackingUpdateSchema = z.object({
+  status: ShipmentStatusSchema,
+  location: z.string(),
+  notes: z.string().optional(),
+  timestamp: z.string(),
+});
+
+export const ShipmentSchema = z.object({
+  id: z.string(),
+  requestId: z.string(),
+  gpId: z.string(),
+  userId: z.string(),
+  status: ShipmentStatusSchema,
+  trackingNumber: z.string(),
+  trackingHistory: z.array(TrackingUpdateSchema),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const CreateShipmentSchema = ShipmentSchema.omit({ id: true, createdAt: true, updatedAt: true });
+export const UpdateShipmentStatusSchema = z.object({
+  shipmentId: z.string(),
+  status: ShipmentStatusSchema,
+  location: z.string(),
+  notes: z.string().optional(),
+});
+
 export type Conversation = z.infer<typeof ConversationSchema>;
 export type Message = z.infer<typeof MessageSchema>;
 export type CreateConversation = z.infer<typeof CreateConversationSchema>;
 export type SendMessage = z.infer<typeof SendMessageSchema>;
+export type ShipmentStatus = z.infer<typeof ShipmentStatusSchema>;
+export type TrackingUpdate = z.infer<typeof TrackingUpdateSchema>;
+export type Shipment = z.infer<typeof ShipmentSchema>;
+export type CreateShipment = z.infer<typeof CreateShipmentSchema>;
+export type UpdateShipmentStatus = z.infer<typeof UpdateShipmentStatusSchema>;

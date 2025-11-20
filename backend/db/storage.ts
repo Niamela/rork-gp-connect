@@ -1,10 +1,11 @@
-import type { UserProfile, TravelAnnouncement, RequestAnnouncement, Conversation, Message } from './schema';
+import type { UserProfile, TravelAnnouncement, RequestAnnouncement, Conversation, Message, Shipment } from './schema';
 
 const users = new Map<string, UserProfile>();
 const travelAnnouncements = new Map<string, TravelAnnouncement>();
 const requestAnnouncements = new Map<string, RequestAnnouncement>();
 const conversations = new Map<string, Conversation>();
 const messages = new Map<string, Message>();
+const shipments = new Map<string, Shipment>();
 
 export const db = {
   users: {
@@ -138,6 +139,43 @@ export const db = {
         messages.set(m.id, { ...m, read: true });
       });
       return conversationMessages;
+    },
+  },
+  shipments: {
+    create: (shipment: Shipment) => {
+      shipments.set(shipment.id, shipment);
+      return shipment;
+    },
+    findById: (id: string) => {
+      return shipments.get(id) || null;
+    },
+    findByUserId: (userId: string) => {
+      return Array.from(shipments.values())
+        .filter(s => s.userId === userId)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    },
+    findByGpId: (gpId: string) => {
+      return Array.from(shipments.values())
+        .filter(s => s.gpId === gpId)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    },
+    findByRequestId: (requestId: string) => {
+      return Array.from(shipments.values()).find(s => s.requestId === requestId) || null;
+    },
+    update: (id: string, updates: Partial<Shipment>) => {
+      const shipment = shipments.get(id);
+      if (!shipment) return null;
+      const updated = { ...shipment, ...updates, updatedAt: new Date().toISOString() };
+      shipments.set(id, updated);
+      return updated;
+    },
+    delete: (id: string) => {
+      return shipments.delete(id);
+    },
+    getAll: () => {
+      return Array.from(shipments.values()).sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     },
   },
 };
