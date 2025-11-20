@@ -12,7 +12,6 @@ import {
   ArrowLeft, 
   MessageCircle, 
   Mail, 
-  Phone, 
   HelpCircle,
   Book,
   Video
@@ -46,9 +45,7 @@ export default function HelpSupportScreen() {
     Linking.openURL('mailto:support@gpconnect.com');
   };
 
-  const handleContactPhone = () => {
-    Linking.openURL('tel:+2250700000000');
-  };
+
 
   const handleLiveChat = () => {
     router.push('/contact');
@@ -96,18 +93,6 @@ export default function HelpSupportScreen() {
               <Text style={styles.contactTitle}>Email</Text>
               <Text style={styles.contactDescription}>
                 support@gpconnect.com
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.contactCard} onPress={handleContactPhone}>
-            <View style={styles.contactIcon}>
-              <Phone size={24} color="#FF6B35" />
-            </View>
-            <View style={styles.contactInfo}>
-              <Text style={styles.contactTitle}>Téléphone</Text>
-              <Text style={styles.contactDescription}>
-                +225 07 00 00 00 00
               </Text>
             </View>
           </TouchableOpacity>
