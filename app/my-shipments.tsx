@@ -7,56 +7,12 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { ArrowLeft, Package, MapPin, Clock, CheckCircle } from 'lucide-react-native';
+import { ArrowLeft, Package } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const mockShipments = [
-  {
-    id: '1',
-    trackingNumber: 'GP2024001',
-    from: 'Paris, France',
-    to: 'Abidjan, Côte d&apos;Ivoire',
-    status: 'En transit',
-    statusColor: '#FF6B35',
-    date: '15 Jan 2024',
-    weight: '5 kg',
-  },
-  {
-    id: '2',
-    trackingNumber: 'GP2024002',
-    from: 'Lyon, France',
-    to: 'Dakar, Sénégal',
-    status: 'Livré',
-    statusColor: '#28A745',
-    date: '10 Jan 2024',
-    weight: '3 kg',
-  },
-  {
-    id: '3',
-    trackingNumber: 'GP2024003',
-    from: 'Marseille, France',
-    to: 'Lomé, Togo',
-    status: 'En attente',
-    statusColor: '#FFC107',
-    date: '20 Jan 2024',
-    weight: '7 kg',
-  },
-];
 
 export default function MyShipmentsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Livré':
-        return <CheckCircle size={20} color="#28A745" />;
-      case 'En transit':
-        return <Package size={20} color="#FF6B35" />;
-      default:
-        return <Clock size={20} color="#FFC107" />;
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -77,66 +33,17 @@ export default function MyShipmentsScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 20 }]}
         showsVerticalScrollIndicator={false}
       >
-        {mockShipments.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Package size={64} color="#ADB5BD" />
-            <Text style={styles.emptyTitle}>Aucun envoi</Text>
-            <Text style={styles.emptyDescription}>
-              Vous n&apos;avez pas encore d&apos;envois en cours
-            </Text>
-          </View>
-        ) : (
-          mockShipments.map((shipment) => (
-            <TouchableOpacity key={shipment.id} style={styles.shipmentCard}>
-              <View style={styles.shipmentHeader}>
-                <View style={styles.trackingInfo}>
-                  <Text style={styles.trackingNumber}>{shipment.trackingNumber}</Text>
-                  <View style={[styles.statusBadge, { backgroundColor: `${shipment.statusColor}20` }]}>
-                    {getStatusIcon(shipment.status)}
-                    <Text style={[styles.statusText, { color: shipment.statusColor }]}>
-                      {shipment.status}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.routeContainer}>
-                <View style={styles.routePoint}>
-                  <View style={styles.routeDot} />
-                  <View style={styles.routeInfo}>
-                    <Text style={styles.routeLabel}>Départ</Text>
-                    <Text style={styles.routeLocation}>{shipment.from}</Text>
-                  </View>
-                </View>
-
-                <View style={styles.routeLine} />
-
-                <View style={styles.routePoint}>
-                  <View style={[styles.routeDot, styles.routeDotDestination]} />
-                  <View style={styles.routeInfo}>
-                    <Text style={styles.routeLabel}>Destination</Text>
-                    <Text style={styles.routeLocation}>{shipment.to}</Text>
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.shipmentFooter}>
-                <View style={styles.footerItem}>
-                  <Clock size={16} color="#6C757D" />
-                  <Text style={styles.footerText}>{shipment.date}</Text>
-                </View>
-                <View style={styles.footerItem}>
-                  <Package size={16} color="#6C757D" />
-                  <Text style={styles.footerText}>{shipment.weight}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))
-        )}
+        <View style={styles.emptyState}>
+          <Package size={64} color="#ADB5BD" />
+          <Text style={styles.emptyTitle}>Aucun envoi</Text>
+          <Text style={styles.emptyDescription}>
+            Vous n&apos;avez pas encore d&apos;envois en cours
+          </Text>
+        </View>
 
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>
-            💡 Suivez l'��tat de vos colis en temps réel. Vous recevrez des notifications à chaque étape importante.
+            💡 Suivez l&apos;état de vos colis en temps réel. Vous recevrez des notifications à chaque étape importante.
           </Text>
         </View>
       </ScrollView>
