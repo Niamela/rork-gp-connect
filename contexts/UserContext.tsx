@@ -52,10 +52,14 @@ const USER_STORAGE_KEY = '@gp_connect_user_profile';
 
 export const [UserProvider, useUser] = createContextHook(() => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const loadUserProfile = useCallback(async () => {
+    if (isInitialized) return;
+    
     console.log('[UserContext] Loading user profile...');
+    setIsLoading(true);
     try {
       const stored = await AsyncStorage.getItem(USER_STORAGE_KEY);
       if (stored) {
@@ -75,8 +79,9 @@ export const [UserProvider, useUser] = createContextHook(() => {
       console.error('[UserContext] Error loading user profile:', error);
     } finally {
       setIsLoading(false);
+      setIsInitialized(true);
     }
-  }, []);
+  }, [isInitialized]);
 
   useEffect(() => {
     loadUserProfile();
