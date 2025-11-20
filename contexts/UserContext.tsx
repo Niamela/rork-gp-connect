@@ -33,6 +33,21 @@ export interface UserProfile {
   gpTravelAnnouncements?: TravelAnnouncement[];
 }
 
+export interface CreateProfileInput {
+  firstName: string;
+  lastName: string;
+  country: string;
+  contact: string;
+  password: string;
+  isGP?: boolean;
+  gpSubscription?: {
+    isActive: boolean;
+    startDate: string;
+    endDate: string;
+    amount: number;
+  };
+}
+
 const USER_STORAGE_KEY = '@gp_connect_user_profile';
 
 export const [UserProvider, useUser] = createContextHook(() => {
@@ -44,9 +59,15 @@ export const [UserProvider, useUser] = createContextHook(() => {
     try {
       const stored = await AsyncStorage.getItem(USER_STORAGE_KEY);
       if (stored) {
-        const profile = JSON.parse(stored);
-        console.log('[UserContext] Profile loaded:', profile);
-        setUserProfile(profile);
+        try {
+          const profile = JSON.parse(stored);
+          console.log('[UserContext] Profile loaded:', profile);
+          setUserProfile(profile);
+        } catch (parseError) {
+          console.error('[UserContext] Error parsing stored profile, clearing corrupted data:', parseError);
+          await AsyncStorage.removeItem(USER_STORAGE_KEY);
+          setUserProfile(null);
+        }
       } else {
         console.log('[UserContext] No profile found in storage');
       }
@@ -75,7 +96,7 @@ export const [UserProvider, useUser] = createContextHook(() => {
     }
   }, []);
 
-  const createProfile = useCallback(async (data: Omit<UserProfile, 'id' | 'createdAt' | 'isVerified'>) => {
+  const createProfile = useCallback(async (data: CreateProfileInput) => {
     try {
       const newProfile = await createProfileMutation.mutateAsync(data);
       await saveUserProfile(newProfile);
