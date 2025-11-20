@@ -18,7 +18,8 @@ export const createProfileProcedure = publicProcedure
       createdAt: new Date().toISOString(),
     });
 
-    return user;
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   });
 
 export default createProfileProcedure;

@@ -6,6 +6,7 @@ export const UserProfileSchema = z.object({
   lastName: z.string().min(1, 'Le nom est requis'),
   country: z.string().min(1, 'Le pays est requis'),
   contact: z.string().min(1, 'Le contact est requis'),
+  password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
   isVerified: z.boolean().default(false),
   createdAt: z.string(),
   isGP: z.boolean().default(false),
