@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { X, User, MapPin, MessageCircle, CheckCircle } from 'lucide-react-native';
+import { X, User, MapPin, Mail, Lock, CheckCircle } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
 
@@ -26,11 +26,17 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [country, setCountry] = useState('');
-  const [contact, setContact] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleCreateProfile = async () => {
-    if (!firstName || !lastName || !country || !contact) {
+    if (!firstName || !lastName || !country || !email || !password) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 6 caractères');
       return;
     }
 
@@ -39,14 +45,16 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
         firstName,
         lastName,
         country,
-        contact,
+        email,
+        password,
         isGP: false,
       });
       
       setFirstName('');
       setLastName('');
       setCountry('');
-      setContact('');
+      setEmail('');
+      setPassword('');
       
       Alert.alert(
         'Profil créé',
@@ -128,14 +136,31 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Contact (Téléphone ou Email) *</Text>
+              <Text style={styles.label}>Email *</Text>
               <View style={styles.inputContainer}>
-                <MessageCircle size={20} color="#FF6B35" />
+                <Mail size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="+XXX XX XX XX XX ou email@example.com"
-                  value={contact}
-                  onChangeText={setContact}
+                  placeholder="email@example.com"
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  placeholderTextColor="#999"
+                />
+              </View>
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Mot de passe *</Text>
+              <View style={styles.inputContainer}>
+                <Lock size={20} color="#FF6B35" />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Au moins 6 caractères"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
                   placeholderTextColor="#999"
                 />
               </View>

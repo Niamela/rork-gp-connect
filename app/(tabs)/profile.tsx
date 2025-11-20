@@ -173,7 +173,7 @@ export default function ProfileScreen() {
               : 'Invité'}
           </Text>
           <Text style={styles.userEmail}>
-            {hasProfile && userProfile ? userProfile.contact : 'Connectez-vous pour commencer'}
+            {hasProfile && userProfile ? userProfile.email : 'Connectez-vous pour commencer'}
           </Text>
           
           {!hasProfile && (

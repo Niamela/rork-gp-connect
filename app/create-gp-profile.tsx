@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { User, Phone, MapPin, CheckCircle } from 'lucide-react-native';
+import { User, Mail, Lock, MapPin, CheckCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { trpc } from '@/lib/trpc';
 import { useUser } from '@/contexts/UserContext';
@@ -25,15 +25,21 @@ export default function CreateGPProfileScreen() {
     firstName: '',
     lastName: '',
     country: '',
-    contact: '',
+    email: '',
+    password: '',
   });
 
   const createProfileMutation = trpc.users.createProfile.useMutation();
   const subscribeGpMutation = trpc.users.subscribeGp.useMutation();
 
   const handleSubmit = async () => {
-    if (!formData.firstName || !formData.lastName || !formData.country || !formData.contact) {
+    if (!formData.firstName || !formData.lastName || !formData.country || !formData.email || !formData.password) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 6 caractères');
       return;
     }
 
@@ -45,7 +51,8 @@ export default function CreateGPProfileScreen() {
         firstName: formData.firstName,
         lastName: formData.lastName,
         country: formData.country,
-        contact: formData.contact,
+        email: formData.email,
+        password: formData.password,
         isGP: true,
       });
 
@@ -150,15 +157,31 @@ export default function CreateGPProfileScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Contact (Téléphone) *</Text>
+            <Text style={styles.label}>Email *</Text>
             <View style={styles.inputContainer}>
-              <Phone size={20} color="#6C757D" style={styles.inputIcon} />
+              <Mail size={20} color="#6C757D" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="+225 XX XX XX XX XX"
-                value={formData.contact}
-                onChangeText={(text) => setFormData({ ...formData, contact: text })}
-                keyboardType="phone-pad"
+                placeholder="email@example.com"
+                value={formData.email}
+                onChangeText={(text) => setFormData({ ...formData, email: text })}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholderTextColor="#999"
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Mot de passe *</Text>
+            <View style={styles.inputContainer}>
+              <Lock size={20} color="#6C757D" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Au moins 6 caractères"
+                value={formData.password}
+                onChangeText={(text) => setFormData({ ...formData, password: text })}
+                secureTextEntry
                 placeholderTextColor="#999"
               />
             </View>
