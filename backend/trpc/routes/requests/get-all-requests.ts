@@ -1,5 +1,5 @@
-import { publicProcedure } from '../../create-context';
-import { db } from '../../../db/storage';
+import { publicProcedure } from '../../create-context.js';
+import { db } from '../../../db/storage.js';
 
 export const getAllRequestsProcedure = publicProcedure
   .query(async () => {

@@ -1,6 +1,6 @@
-import { publicProcedure } from '../../create-context';
-import { UpdateShipmentStatusSchema } from '../../../db/schema';
-import { db } from '../../../db/storage';
+import { publicProcedure } from '../../create-context.js';
+import { UpdateShipmentStatusSchema } from '../../../db/schema.js';
+import { db } from '../../../db/storage.js';
 import { TRPCError } from '@trpc/server';
 
 export const updateShipmentStatusProcedure = publicProcedure

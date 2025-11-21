@@ -1,7 +1,7 @@
-import { publicProcedure } from '../../create-context';
+import { publicProcedure } from '../../create-context.js';
 import { z } from 'zod';
-import { UpdateTravelAnnouncementSchema } from '../../../db/schema';
-import { db } from '../../../db/storage';
+import { UpdateTravelAnnouncementSchema } from '../../../db/schema.js';
+import { db } from '../../../db/storage.js';
 
 export const updateTravelProcedure = publicProcedure
   .input(z.object({

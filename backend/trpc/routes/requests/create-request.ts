@@ -1,6 +1,6 @@
-import { publicProcedure } from '../../create-context';
-import { CreateRequestAnnouncementSchema } from '../../../db/schema';
-import { db } from '../../../db/storage';
+import { publicProcedure } from '../../create-context.js';
+import { CreateRequestAnnouncementSchema } from '../../../db/schema.js';
+import { db } from '../../../db/storage.js';
 
 export const createRequestProcedure = publicProcedure
   .input(CreateRequestAnnouncementSchema)

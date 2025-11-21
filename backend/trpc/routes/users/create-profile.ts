@@ -1,6 +1,6 @@
-import { publicProcedure } from '../../create-context';
-import { CreateUserProfileSchema } from '../../../db/schema';
-import { db } from '../../../db/storage';
+import { publicProcedure } from '../../create-context.js';
+import { CreateUserProfileSchema } from '../../../db/schema.js';
+import { db } from '../../../db/storage.js';
 
 export const createProfileProcedure = publicProcedure
   .input(CreateUserProfileSchema)

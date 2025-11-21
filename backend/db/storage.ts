@@ -5,7 +5,7 @@ import type {
   Conversation,
   Message,
   Shipment,
-} from "./schema";
+} from "./schema.js";
 
 // Check if we're in a serverless environment (Vercel, etc.)
 const isServerless =
