@@ -2,12 +2,17 @@
   "version": 2,
   "builds": [
     {
+<<<<<<< HEAD
       "src": "api/index.ts",
+=======
+      "src": "backend/hono.ts",
+>>>>>>> 902be3cc0dd30d79fa278974ec5969d2fd30ef95
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
+<<<<<<< HEAD
       "src": "/(.*)",
       "dest": "api/index.ts"
     }
@@ -19,3 +24,10 @@
   }
 }
 
+=======
+      "src": "/api/(.*)",
+      "dest": "backend/hono.ts"
+    }
+  ]
+}
+>>>>>>> 902be3cc0dd30d79fa278974ec5969d2fd30ef95

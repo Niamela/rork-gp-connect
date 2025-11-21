@@ -1,15 +1,49 @@
-import type { UserProfile, TravelAnnouncement, RequestAnnouncement, Conversation, Message } from './schema';
+import type { UserProfile, TravelAnnouncement, RequestAnnouncement, Conversation, Message, Shipment } from './schema';
+import * as fs from 'fs';
+import * as path from 'path';
 
-const users = new Map<string, UserProfile>();
-const travelAnnouncements = new Map<string, TravelAnnouncement>();
-const requestAnnouncements = new Map<string, RequestAnnouncement>();
-const conversations = new Map<string, Conversation>();
-const messages = new Map<string, Message>();
+const DATA_DIR = path.join(process.cwd(), 'data');
+
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+function loadData<T>(filename: string): Map<string, T> {
+  const filepath = path.join(DATA_DIR, filename);
+  try {
+    if (fs.existsSync(filepath)) {
+      const data = fs.readFileSync(filepath, 'utf-8');
+      const parsed = JSON.parse(data);
+      return new Map(Object.entries(parsed));
+    }
+  } catch (error) {
+    console.error(`Error loading ${filename}:`, error);
+  }
+  return new Map();
+}
+
+function saveData<T>(filename: string, data: Map<string, T>): void {
+  const filepath = path.join(DATA_DIR, filename);
+  try {
+    const obj = Object.fromEntries(data);
+    fs.writeFileSync(filepath, JSON.stringify(obj, null, 2), 'utf-8');
+  } catch (error) {
+    console.error(`Error saving ${filename}:`, error);
+  }
+}
+
+let users = loadData<UserProfile>('users.json');
+let travelAnnouncements = loadData<TravelAnnouncement>('travels.json');
+let requestAnnouncements = loadData<RequestAnnouncement>('requests.json');
+let conversations = loadData<Conversation>('conversations.json');
+let messages = loadData<Message>('messages.json');
+let shipments = loadData<Shipment>('shipments.json');
 
 export const db = {
   users: {
     create: (user: UserProfile) => {
       users.set(user.id, user);
+      saveData('users.json', users);
       return user;
     },
     findById: (id: string) => {
@@ -23,10 +57,13 @@ export const db = {
       if (!user) return null;
       const updated = { ...user, ...updates };
       users.set(id, updated);
+      saveData('users.json', users);
       return updated;
     },
     delete: (id: string) => {
-      return users.delete(id);
+      const result = users.delete(id);
+      saveData('users.json', users);
+      return result;
     },
     getAll: () => {
       return Array.from(users.values());
@@ -35,6 +72,7 @@ export const db = {
   travelAnnouncements: {
     create: (announcement: TravelAnnouncement) => {
       travelAnnouncements.set(announcement.id, announcement);
+      saveData('travels.json', travelAnnouncements);
       return announcement;
     },
     findById: (id: string) => {
@@ -48,10 +86,13 @@ export const db = {
       if (!announcement) return null;
       const updated = { ...announcement, ...updates, updatedAt: new Date().toISOString() };
       travelAnnouncements.set(id, updated);
+      saveData('travels.json', travelAnnouncements);
       return updated;
     },
     delete: (id: string) => {
-      return travelAnnouncements.delete(id);
+      const result = travelAnnouncements.delete(id);
+      saveData('travels.json', travelAnnouncements);
+      return result;
     },
     getAll: () => {
       return Array.from(travelAnnouncements.values());
@@ -60,6 +101,7 @@ export const db = {
   requestAnnouncements: {
     create: (announcement: RequestAnnouncement) => {
       requestAnnouncements.set(announcement.id, announcement);
+      saveData('requests.json', requestAnnouncements);
       return announcement;
     },
     findById: (id: string) => {
@@ -69,7 +111,9 @@ export const db = {
       return Array.from(requestAnnouncements.values()).filter(a => a.userId === userId);
     },
     delete: (id: string) => {
-      return requestAnnouncements.delete(id);
+      const result = requestAnnouncements.delete(id);
+      saveData('requests.json', requestAnnouncements);
+      return result;
     },
     getAll: () => {
       return Array.from(requestAnnouncements.values()).sort((a, b) => 
@@ -80,6 +124,7 @@ export const db = {
   conversations: {
     create: (conversation: Conversation) => {
       conversations.set(conversation.id, conversation);
+      saveData('conversations.json', conversations);
       return conversation;
     },
     findById: (id: string) => {
@@ -99,10 +144,13 @@ export const db = {
       if (!conversation) return null;
       const updated = { ...conversation, ...updates };
       conversations.set(id, updated);
+      saveData('conversations.json', conversations);
       return updated;
     },
     delete: (id: string) => {
-      return conversations.delete(id);
+      const result = conversations.delete(id);
+      saveData('conversations.json', conversations);
+      return result;
     },
     findExisting: (userId1: string, userId2: string) => {
       return Array.from(conversations.values()).find(c => 
@@ -114,6 +162,7 @@ export const db = {
   messages: {
     create: (message: Message) => {
       messages.set(message.id, message);
+      saveData('messages.json', messages);
       return message;
     },
     findById: (id: string) => {
@@ -129,6 +178,7 @@ export const db = {
       if (!message) return null;
       const updated = { ...message, read: true };
       messages.set(id, updated);
+      saveData('messages.json', messages);
       return updated;
     },
     markConversationAsRead: (conversationId: string, userId: string) => {
@@ -137,7 +187,49 @@ export const db = {
       conversationMessages.forEach(m => {
         messages.set(m.id, { ...m, read: true });
       });
+      saveData('messages.json', messages);
       return conversationMessages;
+    },
+  },
+  shipments: {
+    create: (shipment: Shipment) => {
+      shipments.set(shipment.id, shipment);
+      saveData('shipments.json', shipments);
+      return shipment;
+    },
+    findById: (id: string) => {
+      return shipments.get(id) || null;
+    },
+    findByUserId: (userId: string) => {
+      return Array.from(shipments.values())
+        .filter(s => s.userId === userId)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    },
+    findByGpId: (gpId: string) => {
+      return Array.from(shipments.values())
+        .filter(s => s.gpId === gpId)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    },
+    findByRequestId: (requestId: string) => {
+      return Array.from(shipments.values()).find(s => s.requestId === requestId) || null;
+    },
+    update: (id: string, updates: Partial<Shipment>) => {
+      const shipment = shipments.get(id);
+      if (!shipment) return null;
+      const updated = { ...shipment, ...updates, updatedAt: new Date().toISOString() };
+      shipments.set(id, updated);
+      saveData('shipments.json', shipments);
+      return updated;
+    },
+    delete: (id: string) => {
+      const result = shipments.delete(id);
+      saveData('shipments.json', shipments);
+      return result;
+    },
+    getAll: () => {
+      return Array.from(shipments.values()).sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     },
   },
 };

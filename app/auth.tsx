@@ -11,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { LogIn, UserPlus, Phone, MapPin, User as UserIcon } from 'lucide-react-native';
+import { LogIn, UserPlus, Phone, MapPin, User as UserIcon, Lock } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
@@ -25,13 +25,14 @@ export default function AuthScreen() {
   const { saveUserProfile } = useUser();
   const [mode, setMode] = useState<AuthMode>('login');
   const [contact, setContact] = useState('');
+  const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [country, setCountry] = useState('');
   const [loading, setLoading] = useState(false);
 
   const loginQuery = trpc.users.login.useQuery(
-    { contact },
+    { contact, password },
     { enabled: false }
   );
 
@@ -40,8 +41,8 @@ export default function AuthScreen() {
   const handleLogin = async () => {
     console.log('[Auth] Login attempt with contact:', contact);
     
-    if (!contact.trim()) {
-      Alert.alert('Erreur', 'Veuillez entrer votre email ou téléphone');
+    if (!contact.trim() || !password.trim()) {
+      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
       return;
     }
 
@@ -83,8 +84,13 @@ export default function AuthScreen() {
   const handleSignup = async () => {
     console.log('[Auth] Signup attempt');
     
-    if (!contact.trim() || !firstName.trim() || !lastName.trim() || !country.trim()) {
+    if (!contact.trim() || !password.trim() || !firstName.trim() || !lastName.trim() || !country.trim()) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 6 caractères');
       return;
     }
 
@@ -95,6 +101,7 @@ export default function AuthScreen() {
         lastName,
         country,
         contact,
+        password,
         isGP: false,
       });
       
@@ -171,6 +178,21 @@ export default function AuthScreen() {
                 onChangeText={setContact}
                 autoCapitalize="none"
                 keyboardType="email-address"
+                placeholderTextColor="#999"
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <View style={styles.inputIconContainer}>
+                <Lock size={20} color="#FF6B35" />
+              </View>
+              <TextInput
+                style={styles.input}
+                placeholder="Mot de passe"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                autoCapitalize="none"
                 placeholderTextColor="#999"
               />
             </View>
@@ -253,7 +275,7 @@ export default function AuthScreen() {
             {mode === 'login' && (
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>
-                  Utilisez l&apos;email ou le téléphone que vous avez utilisé lors de l&apos;inscription.
+                  Entrez votre email/téléphone et mot de passe pour vous connecter.
                 </Text>
               </View>
             )}

@@ -7,54 +7,55 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { ArrowLeft, Package, MapPin, Clock, CheckCircle } from 'lucide-react-native';
+import { ArrowLeft, Package, MapPin, Clock, Truck, CheckCircle, AlertCircle } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { trpc } from '@/lib/trpc';
+import { useUser } from '@/contexts/UserContext';
+import type { ShipmentStatus } from '@/backend/db/schema';
 
-const mockShipments = [
-  {
-    id: '1',
-    trackingNumber: 'GP2024001',
-    from: 'Paris, France',
-    to: 'Abidjan, Côte d&apos;Ivoire',
-    status: 'En transit',
-    statusColor: '#FF6B35',
-    date: '15 Jan 2024',
-    weight: '5 kg',
-  },
-  {
-    id: '2',
-    trackingNumber: 'GP2024002',
-    from: 'Lyon, France',
-    to: 'Dakar, Sénégal',
-    status: 'Livré',
-    statusColor: '#28A745',
-    date: '10 Jan 2024',
-    weight: '3 kg',
-  },
-  {
-    id: '3',
-    trackingNumber: 'GP2024003',
-    from: 'Marseille, France',
-    to: 'Lomé, Togo',
-    status: 'En attente',
-    statusColor: '#FFC107',
-    date: '20 Jan 2024',
-    weight: '7 kg',
-  },
-];
+const STATUS_LABELS: Record<ShipmentStatus, string> = {
+  pending: 'En attente',
+  accepted: 'Accepté',
+  in_transit: 'En transit',
+  customs: 'En douane',
+  out_for_delivery: 'En livraison',
+  delivered: 'Livré',
+  cancelled: 'Annulé',
+};
+
+const STATUS_COLORS: Record<ShipmentStatus, string> = {
+  pending: '#FFA500',
+  accepted: '#4169E1',
+  in_transit: '#20B2AA',
+  customs: '#FFD700',
+  out_for_delivery: '#32CD32',
+  delivered: '#28A745',
+  cancelled: '#DC3545',
+};
 
 export default function MyShipmentsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { userProfile } = useUser();
 
-  const getStatusIcon = (status: string) => {
+  const shipmentsQuery = trpc.shipments.getUserShipments.useQuery(
+    { userId: userProfile?.id || '' },
+    { enabled: !!userProfile?.id }
+  );
+
+  const shipments = shipmentsQuery.data || [];
+
+  const getStatusIcon = (status: ShipmentStatus) => {
     switch (status) {
-      case 'Livré':
-        return <CheckCircle size={20} color="#28A745" />;
-      case 'En transit':
-        return <Package size={20} color="#FF6B35" />;
+      case 'delivered':
+        return <CheckCircle size={20} color={STATUS_COLORS[status]} />;
+      case 'in_transit':
+      case 'out_for_delivery':
+        return <Truck size={20} color={STATUS_COLORS[status]} />;
+      case 'cancelled':
+        return <AlertCircle size={20} color={STATUS_COLORS[status]} />;
       default:
-        return <Clock size={20} color="#FFC107" />;
+        return <Package size={20} color={STATUS_COLORS[status]} />;
     }
   };
 
@@ -77,68 +78,122 @@ export default function MyShipmentsScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 20 }]}
         showsVerticalScrollIndicator={false}
       >
-        {mockShipments.length === 0 ? (
+        {shipmentsQuery.isLoading ? (
           <View style={styles.emptyState}>
-            <Package size={64} color="#ADB5BD" />
-            <Text style={styles.emptyTitle}>Aucun envoi</Text>
-            <Text style={styles.emptyDescription}>
-              Vous n&apos;avez pas encore d&apos;envois en cours
-            </Text>
+            <Text style={styles.emptyDescription}>Chargement...</Text>
           </View>
+        ) : shipments.length === 0 ? (
+          <>
+            <View style={styles.emptyState}>
+              <Package size={64} color="#ADB5BD" />
+              <Text style={styles.emptyTitle}>Aucun envoi</Text>
+              <Text style={styles.emptyDescription}>
+                Vous n&apos;avez pas encore d&apos;envois en cours
+              </Text>
+            </View>
+
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>
+                💡 Suivez l&apos;état de vos colis en temps réel. Vous recevrez des notifications à chaque étape importante.
+              </Text>
+            </View>
+          </>
         ) : (
-          mockShipments.map((shipment) => (
-            <TouchableOpacity key={shipment.id} style={styles.shipmentCard}>
-              <View style={styles.shipmentHeader}>
-                <View style={styles.trackingInfo}>
-                  <Text style={styles.trackingNumber}>{shipment.trackingNumber}</Text>
-                  <View style={[styles.statusBadge, { backgroundColor: `${shipment.statusColor}20` }]}>
-                    {getStatusIcon(shipment.status)}
-                    <Text style={[styles.statusText, { color: shipment.statusColor }]}>
-                      {shipment.status}
+          <>
+            {shipments.map((shipment) => (
+              <View key={shipment.id} style={styles.shipmentCard}>
+                <View style={styles.shipmentHeader}>
+                  <View style={styles.trackingInfo}>
+                    <Text style={styles.trackingNumber}>{shipment.trackingNumber}</Text>
+                    <View
+                      style={[
+                        styles.statusBadge,
+                        { backgroundColor: `${STATUS_COLORS[shipment.status]}20` },
+                      ]}
+                    >
+                      {getStatusIcon(shipment.status)}
+                      <Text
+                        style={[
+                          styles.statusText,
+                          { color: STATUS_COLORS[shipment.status] },
+                        ]}
+                      >
+                        {STATUS_LABELS[shipment.status]}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                {shipment.trackingHistory.length > 0 && (
+                  <View style={styles.routeContainer}>
+                    <View style={styles.currentLocation}>
+                      <MapPin size={16} color="#FF6B35" />
+                      <View style={styles.locationInfo}>
+                        <Text style={styles.locationLabel}>Localisation actuelle</Text>
+                        <Text style={styles.locationText}>
+                          {shipment.trackingHistory[shipment.trackingHistory.length - 1].location}
+                        </Text>
+                        {shipment.trackingHistory[shipment.trackingHistory.length - 1].notes && (
+                          <Text style={styles.locationNotes}>
+                            {shipment.trackingHistory[shipment.trackingHistory.length - 1].notes}
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                )}
+
+                {shipment.trackingHistory.length > 1 && (
+                  <View style={styles.historySection}>
+                    <Text style={styles.historyTitle}>Historique de suivi</Text>
+                    {shipment.trackingHistory.slice().reverse().map((update, index) => (
+                      <View key={index} style={styles.historyItem}>
+                        <View style={styles.historyTimeline}>
+                          <View style={[
+                            styles.historyDot,
+                            index === 0 && styles.historyDotActive
+                          ]} />
+                          {index < shipment.trackingHistory.length - 1 && (
+                            <View style={styles.historyLine} />
+                          )}
+                        </View>
+                        <View style={styles.historyContent}>
+                          <Text style={styles.historyStatus}>
+                            {STATUS_LABELS[update.status]}
+                          </Text>
+                          <Text style={styles.historyLocation}>{update.location}</Text>
+                          {update.notes && (
+                            <Text style={styles.historyNotes}>{update.notes}</Text>
+                          )}
+                          <View style={styles.historyTimeContainer}>
+                            <Clock size={12} color="#ADB5BD" />
+                            <Text style={styles.historyTime}>
+                              {new Date(update.timestamp).toLocaleString('fr-FR')}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                )}
+
+                <View style={styles.shipmentFooter}>
+                  <View style={styles.footerItem}>
+                    <Text style={styles.footerText}>
+                      Créé le {new Date(shipment.createdAt).toLocaleDateString('fr-FR')}
                     </Text>
                   </View>
                 </View>
               </View>
-
-              <View style={styles.routeContainer}>
-                <View style={styles.routePoint}>
-                  <View style={styles.routeDot} />
-                  <View style={styles.routeInfo}>
-                    <Text style={styles.routeLabel}>Départ</Text>
-                    <Text style={styles.routeLocation}>{shipment.from}</Text>
-                  </View>
-                </View>
-
-                <View style={styles.routeLine} />
-
-                <View style={styles.routePoint}>
-                  <View style={[styles.routeDot, styles.routeDotDestination]} />
-                  <View style={styles.routeInfo}>
-                    <Text style={styles.routeLabel}>Destination</Text>
-                    <Text style={styles.routeLocation}>{shipment.to}</Text>
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.shipmentFooter}>
-                <View style={styles.footerItem}>
-                  <Clock size={16} color="#6C757D" />
-                  <Text style={styles.footerText}>{shipment.date}</Text>
-                </View>
-                <View style={styles.footerItem}>
-                  <Package size={16} color="#6C757D" />
-                  <Text style={styles.footerText}>{shipment.weight}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))
+            ))}
+            
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>
+                💡 Le GP met à jour le statut de votre colis à chaque étape importante du voyage.
+              </Text>
+            </View>
+          </>
         )}
-
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>
-            💡 Suivez l'��tat de vos colis en temps réel. Vous recevrez des notifications à chaque étape importante.
-          </Text>
-        </View>
       </ScrollView>
     </View>
   );
@@ -231,6 +286,100 @@ const styles = StyleSheet.create({
     backgroundColor: '#E9ECEF',
     marginLeft: 5,
     marginVertical: 4,
+  },
+  currentLocation: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#F8F9FA',
+    padding: 12,
+    borderRadius: 10,
+    gap: 8,
+  },
+  locationInfo: {
+    flex: 1,
+  },
+  locationLabel: {
+    fontSize: 12,
+    color: '#6C757D',
+    marginBottom: 4,
+  },
+  locationText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#2C3E50',
+    marginBottom: 2,
+  },
+  locationNotes: {
+    fontSize: 13,
+    color: '#6C757D',
+    fontStyle: 'italic',
+  },
+  historySection: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E9ECEF',
+  },
+  historyTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#2C3E50',
+    marginBottom: 12,
+  },
+  historyItem: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  historyTimeline: {
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  historyDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#E9ECEF',
+    borderWidth: 2,
+    borderColor: '#E9ECEF',
+  },
+  historyDotActive: {
+    backgroundColor: '#FF6B35',
+    borderColor: '#FF6B35',
+  },
+  historyLine: {
+    width: 2,
+    height: 40,
+    backgroundColor: '#E9ECEF',
+    marginVertical: 2,
+  },
+  historyContent: {
+    flex: 1,
+  },
+  historyStatus: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2C3E50',
+    marginBottom: 2,
+  },
+  historyLocation: {
+    fontSize: 13,
+    color: '#495057',
+    marginBottom: 2,
+  },
+  historyNotes: {
+    fontSize: 12,
+    color: '#6C757D',
+    fontStyle: 'italic',
+    marginBottom: 4,
+  },
+  historyTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  historyTime: {
+    fontSize: 11,
+    color: '#ADB5BD',
   },
   shipmentFooter: {
     flexDirection: 'row',
