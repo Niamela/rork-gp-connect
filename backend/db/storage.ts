@@ -11,8 +11,9 @@ import type {
 const isServerless =
   typeof process !== "undefined" &&
   (process.env.VERCEL === "1" ||
-    process.env.AWS_LAMBDA_FUNCTION_NAME ||
-    !process.cwd);
+    process.env.VERCEL_ENV !== undefined ||
+    process.env.AWS_LAMBDA_FUNCTION_NAME !== undefined ||
+    typeof process.cwd !== "function");
 
 // In-memory storage (used in serverless environments)
 let users = new Map<string, UserProfile>();
@@ -23,7 +24,7 @@ let messages = new Map<string, Message>();
 let shipments = new Map<string, Shipment>();
 
 // File-based storage (only used in non-serverless environments)
-if (!isServerless) {
+if (!isServerless && typeof require !== "undefined") {
   try {
     const fs = require("fs");
     const path = require("path");
@@ -59,7 +60,7 @@ if (!isServerless) {
 }
 
 function saveData<T>(filename: string, data: Map<string, T>): void {
-  if (isServerless) {
+  if (isServerless || typeof require === "undefined") {
     // In serverless, data is only in memory (no persistence)
     return;
   }
