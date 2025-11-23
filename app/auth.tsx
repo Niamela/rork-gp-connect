@@ -15,7 +15,7 @@ import { LogIn, UserPlus, Phone, MapPin, User as UserIcon, Lock } from 'lucide-r
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
-import { trpc } from '@/lib/trpc';
+import { trpc, trpcClient } from '@/lib/trpc';
 
 type AuthMode = 'login' | 'signup';
 
@@ -31,11 +31,6 @@ export default function AuthScreen() {
   const [country, setCountry] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const loginQuery = trpc.users.login.useQuery(
-    { contact, password },
-    { enabled: false }
-  );
-
   const createProfileMutation = trpc.users.createProfile.useMutation();
 
   const handleLogin = async () => {
@@ -48,11 +43,11 @@ export default function AuthScreen() {
 
     setLoading(true);
     try {
-      const result = await loginQuery.refetch();
-      console.log('[Auth] Profile query result:', result);
+      const result = await trpcClient.users.login.query({ contact, password });
+      console.log('[Auth] Login result:', result);
       
-      if (result.data) {
-        await saveUserProfile(result.data);
+      if (result) {
+        await saveUserProfile(result);
         Alert.alert('Connexion réussie', 'Bienvenue !', [
           { text: 'OK', onPress: () => router.replace('/(tabs)') }
         ]);
@@ -66,16 +61,21 @@ export default function AuthScreen() {
           ]
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('[Auth] Login error:', error);
-      Alert.alert(
-        'Compte introuvable',
-        'Aucun compte trouvé. Voulez-vous créer un compte ?',
-        [
-          { text: 'Annuler', style: 'cancel' },
-          { text: 'Créer un compte', onPress: () => setMode('signup') }
-        ]
-      );
+      
+      if (error?.message?.includes('Mot de passe')) {
+        Alert.alert('Erreur', 'Mot de passe incorrect');
+      } else {
+        Alert.alert(
+          'Compte introuvable',
+          'Aucun compte trouvé. Voulez-vous créer un compte ?',
+          [
+            { text: 'Annuler', style: 'cancel' },
+            { text: 'Créer un compte', onPress: () => setMode('signup') }
+          ]
+        );
+      }
     } finally {
       setLoading(false);
     }
