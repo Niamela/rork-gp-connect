@@ -25,7 +25,12 @@ export const subscribeGpProcedure = publicProcedure
       },
     });
 
-    return updated;
+    if (!updated) {
+      throw new Error('Erreur lors de la mise à jour du profil');
+    }
+
+    const { password, ...userWithoutPassword } = updated;
+    return userWithoutPassword;
   });
 
 export default subscribeGpProcedure;

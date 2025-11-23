@@ -11,7 +11,8 @@ export const getProfileProcedure = publicProcedure
       throw new Error('Utilisateur non trouvé');
     }
 
-    return user;
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   });
 
 export default getProfileProcedure;
