@@ -41,7 +41,6 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
     }
 
     try {
-      console.log('[CreateProfileModal] Creating profile...');
       await createProfile({
         firstName,
         lastName,
@@ -51,7 +50,6 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
         isGP: false,
       });
       
-      console.log('[CreateProfileModal] Profile created successfully');
       setFirstName('');
       setLastName('');
       setCountry('');
@@ -66,10 +64,8 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
           if (onSuccess) onSuccess();
         }}]
       );
-    } catch (error) {
-      console.error('[CreateProfileModal] Error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Impossible de créer le profil. Veuillez réessayer.';
-      Alert.alert('Erreur', errorMessage);
+    } catch {
+      Alert.alert('Erreur', 'Impossible de créer le profil. Veuillez réessayer.');
     }
   };
 

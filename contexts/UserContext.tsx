@@ -103,17 +103,12 @@ export const [UserProvider, useUser] = createContextHook(() => {
 
   const createProfile = useCallback(async (data: CreateProfileInput) => {
     try {
-      console.log('[UserContext] Creating profile with data:', data);
       const newProfile = await createProfileMutation.mutateAsync(data);
-      console.log('[UserContext] Profile created successfully:', newProfile);
       await saveUserProfile(newProfile);
       return newProfile;
     } catch (error) {
-      console.error('[UserContext] Error creating profile:', error);
-      if (error && typeof error === 'object' && 'message' in error) {
-        throw new Error((error as { message: string }).message);
-      }
-      throw new Error('Impossible de créer le profil. Veuillez réessayer.');
+      console.error('Error creating profile:', error);
+      throw error;
     }
   }, [createProfileMutation, saveUserProfile]);
 
