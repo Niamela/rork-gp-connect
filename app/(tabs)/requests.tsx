@@ -46,6 +46,7 @@ export default function RequestsScreen() {
   const [lastName, setLastName] = useState('');
   const [country, setCountry] = useState('');
   const [contact, setContact] = useState('');
+  const [password, setPassword] = useState('');
   
   const [searchQuery, setSearchQuery] = useState('');
   const [filterFromCountry, setFilterFromCountry] = useState('');
@@ -90,8 +91,13 @@ export default function RequestsScreen() {
   };
 
   const handleCreateProfile = async () => {
-    if (!firstName || !lastName || !country || !contact) {
+    if (!firstName || !lastName || !country || !contact || !password) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 6 caractères');
       return;
     }
 
@@ -101,6 +107,7 @@ export default function RequestsScreen() {
         lastName,
         country,
         contact,
+        password,
         isGP: false,
       });
       
@@ -109,6 +116,7 @@ export default function RequestsScreen() {
       setLastName('');
       setCountry('');
       setContact('');
+      setPassword('');
       
       Alert.alert(
         'Profil créé',
@@ -482,6 +490,22 @@ export default function RequestsScreen() {
                     placeholder="+XXX XX XX XX XX ou email@example.com"
                     value={contact}
                     onChangeText={setContact}
+                    placeholderTextColor="#999"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Mot de passe *</Text>
+                <View style={styles.inputContainer}>
+                  <MessageCircle size={20} color="#FF6B35" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Minimum 6 caractères"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    autoCapitalize="none"
                     placeholderTextColor="#999"
                   />
                 </View>
