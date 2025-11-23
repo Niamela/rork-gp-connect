@@ -17,7 +17,6 @@ export const createRequestProcedure = publicProcedure
         lastName: input.userName.split(' ').slice(1).join(' ') || '',
         country: input.fromCountry,
         contact: input.contactInfo,
-        password: `temp_${Date.now()}`,
         isVerified: false,
         createdAt: new Date().toISOString(),
         isGP: false,

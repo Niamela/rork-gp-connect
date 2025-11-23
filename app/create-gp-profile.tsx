@@ -26,20 +26,14 @@ export default function CreateGPProfileScreen() {
     lastName: '',
     country: '',
     contact: '',
-    password: '',
   });
 
   const createProfileMutation = trpc.users.createProfile.useMutation();
   const subscribeGpMutation = trpc.users.subscribeGp.useMutation();
 
   const handleSubmit = async () => {
-    if (!formData.firstName || !formData.lastName || !formData.country || !formData.contact || !formData.password) {
+    if (!formData.firstName || !formData.lastName || !formData.country || !formData.contact) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 6 caractères');
       return;
     }
 
@@ -52,7 +46,6 @@ export default function CreateGPProfileScreen() {
         lastName: formData.lastName,
         country: formData.country,
         contact: formData.contact,
-        password: formData.password,
         isGP: true,
       });
 
@@ -166,22 +159,6 @@ export default function CreateGPProfileScreen() {
                 value={formData.contact}
                 onChangeText={(text) => setFormData({ ...formData, contact: text })}
                 keyboardType="phone-pad"
-                placeholderTextColor="#999"
-              />
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Mot de passe *</Text>
-            <View style={styles.inputContainer}>
-              <Phone size={20} color="#6C757D" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Minimum 6 caractères"
-                value={formData.password}
-                onChangeText={(text) => setFormData({ ...formData, password: text })}
-                secureTextEntry
-                autoCapitalize="none"
                 placeholderTextColor="#999"
               />
             </View>
