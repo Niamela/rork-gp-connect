@@ -20,7 +20,7 @@ const getBaseUrl = () => {
 export const trpcClient = trpc.createClient({
   links: [
     httpLink({
-      url: `${getBaseUrl()}/api/trpc`,
+      url: `https://gp-connect-niamela58-6955-niame-keita-s-projects.vercel.app/api/trpc`,
       transformer: superjson,
     }),
   ],
