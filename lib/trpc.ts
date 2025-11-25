@@ -1,7 +1,6 @@
 import { createTRPCReact } from "@trpc/react-query";
 import { httpLink } from "@trpc/client";
 import type { AppRouter } from "@/backend/trpc/app-router";
-import superjson from "superjson";
 
 export const trpc = createTRPCReact<AppRouter>();
 
@@ -20,8 +19,20 @@ const getBaseUrl = () => {
 export const trpcClient = trpc.createClient({
   links: [
     httpLink({
-      url: `https://gp-connect-niamela58-6955-niame-keita-s-projects.vercel.app/api/trpc`,
-      transformer: superjson,
+      url: `${getBaseUrl()}/api/trpc`,
+      fetch: (url, options) => {
+        console.log('[tRPC] Fetching:', url);
+        return fetch(url, {
+          ...options,
+          headers: {
+            ...options?.headers,
+            'Content-Type': 'application/json',
+          },
+        }).catch((error) => {
+          console.error('[tRPC] Fetch error:', error);
+          throw error;
+        });
+      },
     }),
   ],
 });
