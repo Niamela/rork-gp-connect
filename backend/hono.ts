@@ -6,14 +6,7 @@ import { createContext } from "./trpc/create-context.js";
 
 const app = new Hono();
 
-app.use("*", cors({
-  origin: '*',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-  exposeHeaders: ['Content-Length'],
-  maxAge: 600,
-  credentials: true,
-}));
+app.use("*", cors());
 
 app.use(
   "/api/trpc/*",
@@ -24,12 +17,6 @@ app.use(
 );
 
 app.get("/", (c) => {
-  console.log('[Backend] Health check request');
-  return c.json({ status: "ok", message: "API is running" });
-});
-
-app.get("/api", (c) => {
-  console.log('[Backend] API health check request');
   return c.json({ status: "ok", message: "API is running" });
 });
 
