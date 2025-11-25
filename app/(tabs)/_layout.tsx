@@ -1,5 +1,12 @@
 import { Tabs } from "expo-router";
-import { Home, Search, User, MessageSquare, Plus, MessageCircle } from "lucide-react-native";
+import {
+  Home,
+  Search,
+  User,
+  MessageSquare,
+  Plus,
+  MessageCircle,
+} from "lucide-react-native";
 import React, { useState } from "react";
 import { TouchableOpacity, View, StyleSheet, Alert } from "react-native";
 import { useUser } from "@/contexts/UserContext";
@@ -12,25 +19,28 @@ function AddButton() {
   const [profileModalVisible, setProfileModalVisible] = useState(false);
 
   const handlePress = () => {
-    console.log('[AddButton] Button pressed');
-    console.log('[AddButton] hasProfile:', hasProfile);
-    console.log('[AddButton] userProfile:', userProfile);
-    
+    console.log("[AddButton] Button pressed");
+    console.log("[AddButton] hasProfile:", hasProfile);
+    console.log("[AddButton] userProfile:", userProfile);
+
     if (!hasProfile) {
-      console.log('[AddButton] No profile, showing alert');
+      console.log("[AddButton] No profile, showing alert");
       Alert.alert(
-        'Profil requis',
-        'Vous devez créer un profil gratuit pour publier une demande.',
+        "Profil requis",
+        "Vous devez créer un profil gratuit pour publier une demande.",
         [
-          { text: 'Annuler', style: 'cancel' },
-          { text: 'Créer un profil', onPress: () => {
-            console.log('[AddButton] Opening profile modal');
-            setProfileModalVisible(true);
-          }}
+          { text: "Annuler", style: "cancel" },
+          {
+            text: "Créer un profil",
+            onPress: () => {
+              console.log("[AddButton] Opening profile modal");
+              setProfileModalVisible(true);
+            },
+          },
         ]
       );
     } else {
-      console.log('[AddButton] Has profile, opening request modal');
+      console.log("[AddButton] Has profile, opening request modal");
       setRequestModalVisible(true);
     }
   };
@@ -46,7 +56,7 @@ function AddButton() {
           <Plus size={28} color="white" strokeWidth={2.5} />
         </View>
       </TouchableOpacity>
-      
+
       <CreateProfileModal
         visible={profileModalVisible}
         onClose={() => setProfileModalVisible(false)}
@@ -55,7 +65,7 @@ function AddButton() {
           setRequestModalVisible(true);
         }}
       />
-      
+
       <CreateRequestModal
         visible={requestModalVisible}
         onClose={() => setRequestModalVisible(false)}
@@ -68,20 +78,21 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#FF6B35',
-        tabBarInactiveTintColor: '#6C757D',
+        tabBarActiveTintColor: "#FF6B35",
+        tabBarInactiveTintColor: "#6C757D",
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: 'white',
+          backgroundColor: "white",
           borderTopWidth: 1,
-          borderTopColor: '#E9ECEF',
+          borderTopColor: "#E9ECEF",
           height: 70,
-          paddingBottom: 10,
+          paddingBottom: 30,
+          marginBottom: 30,
           paddingTop: 8,
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
+          fontWeight: "600",
         },
         tabBarItemStyle: {
           paddingVertical: 5,
@@ -119,14 +130,18 @@ export default function TabLayout() {
         name="requests"
         options={{
           title: "Annonces",
-          tabBarIcon: ({ color, size }) => <MessageSquare color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <MessageSquare color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
         name="messages"
         options={{
           title: "Messages",
-          tabBarIcon: ({ color, size }) => <MessageCircle color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <MessageCircle color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -143,17 +158,17 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   addButton: {
     top: -20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   addButtonInner: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#FF6B35',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
+    backgroundColor: "#FF6B35",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
