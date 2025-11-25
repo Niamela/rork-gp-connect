@@ -1,6 +1,6 @@
-import { publicProcedure } from '../../create-context.js';
+import { publicProcedure } from '../../create-context';
 import { z } from 'zod';
-import { db } from '../../../db/storage.js';
+import { db } from '../../../db/storage';
 
 export const deleteTravelProcedure = publicProcedure
   .input(z.object({ travelId: z.string() }))

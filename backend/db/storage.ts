@@ -5,15 +5,14 @@ import type {
   Conversation,
   Message,
   Shipment,
-} from "./schema.js";
+} from "./schema";
 
 // Check if we're in a serverless environment (Vercel, etc.)
 const isServerless =
   typeof process !== "undefined" &&
   (process.env.VERCEL === "1" ||
-    process.env.VERCEL_ENV !== undefined ||
-    process.env.AWS_LAMBDA_FUNCTION_NAME !== undefined ||
-    typeof process.cwd !== "function");
+    process.env.AWS_LAMBDA_FUNCTION_NAME ||
+    !process.cwd);
 
 // In-memory storage (used in serverless environments)
 let users = new Map<string, UserProfile>();
@@ -24,7 +23,7 @@ let messages = new Map<string, Message>();
 let shipments = new Map<string, Shipment>();
 
 // File-based storage (only used in non-serverless environments)
-if (!isServerless && typeof require !== "undefined") {
+if (!isServerless) {
   try {
     const fs = require("fs");
     const path = require("path");
@@ -60,7 +59,7 @@ if (!isServerless && typeof require !== "undefined") {
 }
 
 function saveData<T>(filename: string, data: Map<string, T>): void {
-  if (isServerless || typeof require === "undefined") {
+  if (isServerless) {
     // In serverless, data is only in memory (no persistence)
     return;
   }

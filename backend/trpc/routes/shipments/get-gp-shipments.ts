@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { publicProcedure } from '../../create-context.js';
-import { db } from '../../../db/storage.js';
+import { publicProcedure } from '../../create-context';
+import { db } from '../../../db/storage';
 
 export const getGpShipmentsProcedure = publicProcedure
   .input(z.object({ gpId: z.string() }))

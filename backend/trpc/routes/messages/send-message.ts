@@ -1,6 +1,6 @@
-import { publicProcedure } from "../../create-context.js";
-import { SendMessageSchema } from "../../../db/schema.js";
-import { db } from "../../../db/storage.js";
+import { publicProcedure } from "../../create-context";
+import { SendMessageSchema } from "../../../db/schema";
+import { db } from "../../../db/storage";
 import { z } from "zod";
 
 export const sendMessageProcedure = publicProcedure

@@ -1,6 +1,6 @@
-import { publicProcedure } from "../../create-context.js";
-import { CreateConversationSchema } from "../../../db/schema.js";
-import { db } from "../../../db/storage.js";
+import { publicProcedure } from "../../create-context";
+import { CreateConversationSchema } from "../../../db/schema";
+import { db } from "../../../db/storage";
 import { z } from "zod";
 
 export const createConversationProcedure = publicProcedure
