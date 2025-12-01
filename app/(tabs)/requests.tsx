@@ -15,6 +15,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useRequests } from '@/contexts/RequestsContext';
 import { useMessages } from '@/contexts/MessagesContext';
 import { useRouter } from 'expo-router';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Request {
   id: string;
@@ -36,6 +37,7 @@ export default function RequestsScreen() {
   const { hasProfile, userProfile, createProfile } = useUser();
   const { requests, addRequest, deleteRequest: deleteReq, isLoading } = useRequests();
   const { createConversation } = useMessages();
+  const { t } = useLanguage();
   
   const [modalVisible, setModalVisible] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
@@ -243,9 +245,9 @@ export default function RequestsScreen() {
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <View>
-          <Text style={styles.headerTitle}>Demandes de GP</Text>
+          <Text style={styles.headerTitle}>{t('requests.title')}</Text>
           <Text style={styles.headerSubtitle}>
-            Publiez votre demande et les GPs vous contacteront
+            {t('requests.subtitle')}
           </Text>
         </View>
         
@@ -255,7 +257,7 @@ export default function RequestsScreen() {
             <Search size={18} color="#6C757D" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Rechercher..."
+              placeholder={t('requests.search')}
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholderTextColor="#999"
@@ -304,11 +306,11 @@ export default function RequestsScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Comment ça marche ?</Text>
+          <Text style={styles.infoTitle}>{t('requests.howItWorks')}</Text>
           <Text style={styles.infoText}>
-            1. Publiez votre demande avec les détails de votre envoi{'\n'}
-            2. Les GPs disponibles verront votre annonce{'\n'}
-            3. Ils vous contacteront directement pour discuter
+            {t('requests.step1')}{'\n'}
+            {t('requests.step2')}{'\n'}
+            {t('requests.step3')}
           </Text>
         </View>
 
@@ -323,14 +325,14 @@ export default function RequestsScreen() {
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Chargement...</Text>
+            <Text style={styles.loadingText}>{t('common.loading')}</Text>
           </View>
         ) : filteredRequests.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>
               {searchQuery || hasActiveFilters 
-                ? 'Aucune demande ne correspond à vos critères'
-                : 'Aucune demande pour le moment'
+                ? t('requests.noResults')
+                : t('requests.noRequests')
               }
             </Text>
           </View>
@@ -382,7 +384,7 @@ export default function RequestsScreen() {
                   onPress={() => handleDeleteRequest(request.id)}
                 >
                   <Trash2 size={16} color="white" />
-                  <Text style={styles.deleteButtonText}>Supprimer</Text>
+                  <Text style={styles.deleteButtonText}>{t('requests.delete')}</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity 
@@ -390,7 +392,7 @@ export default function RequestsScreen() {
                 onPress={() => handleContactRequest(request)}
               >
                 <MessageCircle size={18} color="white" />
-                <Text style={styles.contactButtonText}>Contacter</Text>
+                <Text style={styles.contactButtonText}>{t('requests.contact')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -515,7 +517,7 @@ export default function RequestsScreen() {
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Publier une demande</Text>
+              <Text style={styles.modalTitle}>{t('requests.publishRequest')}</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <X size={24} color="#2C3E50" />
               </TouchableOpacity>
@@ -523,7 +525,7 @@ export default function RequestsScreen() {
 
             <ScrollView showsVerticalScrollIndicator={false}>
               <View style={styles.formGroup}>
-                <Text style={styles.label}>De (Pays) *</Text>
+                <Text style={styles.label}>{t('requests.from')}</Text>
                 <View style={styles.inputContainer}>
                   <MapPin size={20} color="#FF6B35" />
                   <TextInput
@@ -537,7 +539,7 @@ export default function RequestsScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={styles.label}>Vers (Pays) *</Text>
+                <Text style={styles.label}>{t('requests.to')}</Text>
                 <View style={styles.inputContainer}>
                   <MapPin size={20} color="#FF6B35" />
                   <TextInput
@@ -551,7 +553,7 @@ export default function RequestsScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={styles.label}>Poids approximatif (kg) *</Text>
+                <Text style={styles.label}>{t('requests.weight')}</Text>
                 <View style={styles.inputContainer}>
                   <Package size={20} color="#FF6B35" />
                   <TextInput
@@ -566,7 +568,7 @@ export default function RequestsScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={styles.label}>Date souhaitée *</Text>
+                <Text style={styles.label}>{t('requests.date')}</Text>
                 <View style={styles.inputContainer}>
                   <Calendar size={20} color="#FF6B35" />
                   <TextInput
@@ -580,7 +582,7 @@ export default function RequestsScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={styles.label}>Type de produit *</Text>
+                <Text style={styles.label}>{t('requests.productType')}</Text>
                 <View style={styles.inputContainer}>
                   <Box size={20} color="#FF6B35" />
                   <TextInput
@@ -594,7 +596,7 @@ export default function RequestsScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={styles.label}>Contact (Téléphone ou Email) *</Text>
+                <Text style={styles.label}>{t('requests.contactInfo')}</Text>
                 <View style={styles.inputContainer}>
                   <MessageCircle size={20} color="#FF6B35" />
                   <TextInput
@@ -608,7 +610,7 @@ export default function RequestsScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={styles.label}>Description (optionnel)</Text>
+                <Text style={styles.label}>{t('requests.description')}</Text>
                 <TextInput
                   style={[styles.input, styles.textArea]}
                   placeholder="Décrivez votre colis et vos besoins..."
@@ -625,7 +627,7 @@ export default function RequestsScreen() {
                 style={styles.publishButton}
                 onPress={handlePublishRequest}
               >
-                <Text style={styles.publishButtonText}>Publier la demande</Text>
+                <Text style={styles.publishButtonText}>{t('requests.publish')}</Text>
               </TouchableOpacity>
 
               <Text style={styles.disclaimer}>
@@ -646,7 +648,7 @@ export default function RequestsScreen() {
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Filtrer les demandes</Text>
+              <Text style={styles.modalTitle}>{t('requests.filterTitle')}</Text>
               <TouchableOpacity onPress={() => setFilterModalVisible(false)}>
                 <X size={24} color="#2C3E50" />
               </TouchableOpacity>
@@ -655,7 +657,7 @@ export default function RequestsScreen() {
             <ScrollView showsVerticalScrollIndicator={false}>
               <View style={styles.filterInfoCard}>
                 <Text style={styles.filterInfoText}>
-                  Utilisez les filtres ci-dessous pour trouver les demandes qui correspondent à vos voyages prévus.
+                  {t('requests.filterInfo')}
                 </Text>
               </View>
 
@@ -709,14 +711,14 @@ export default function RequestsScreen() {
                     setFilterModalVisible(false);
                   }}
                 >
-                  <Text style={styles.clearButtonText}>Effacer les filtres</Text>
+                  <Text style={styles.clearButtonText}>{t('browse.clearFilters')}</Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity
                   style={styles.applyButton}
                   onPress={() => setFilterModalVisible(false)}
                 >
-                  <Text style={styles.applyButtonText}>Appliquer</Text>
+                  <Text style={styles.applyButtonText}>{t('requests.applyFilters')}</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>

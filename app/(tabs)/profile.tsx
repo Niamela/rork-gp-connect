@@ -30,12 +30,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
 import { useTravels } from '@/contexts/TravelsContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { userProfile, hasProfile, updateUserProfile, clearUserProfile } = useUser();
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const { t } = useLanguage();
   
   const isGPSubscribed = userProfile?.isGP && userProfile?.gpSubscription?.isActive;
   
@@ -47,7 +49,7 @@ export default function ProfileScreen() {
       Alert.alert(
         'Profil requis',
         'Vous devez créer un profil avant de devenir GP.',
-        [{ text: 'OK' }]
+        [{ text: t('common.ok') }]
       );
       return;
     }
@@ -56,7 +58,7 @@ export default function ProfileScreen() {
       Alert.alert(
         'Déjà abonné',
         'Vous êtes déjà un GP avec un abonnement actif.',
-        [{ text: 'OK' }]
+        [{ text: t('common.ok') }]
       );
       return;
     }
@@ -83,15 +85,15 @@ export default function ProfileScreen() {
     Alert.alert(
       'Abonnement activé',
       'Félicitations ! Vous êtes maintenant un GP. Vous pouvez mettre à jour vos informations de voyage et contacter les annonces.',
-      [{ text: 'OK' }]
+      [{ text: t('common.ok') }]
     );
   };
   
   const gpMenuItems = isGPSubscribed ? [
     {
       icon: MapPin,
-      title: 'Mes voyages',
-      subtitle: 'Gérer mes annonces de voyage',
+      title: t('profile.myTravels'),
+      subtitle: t('profile.editProfileSub'),
       onPress: () => router.push('/gp-travels'),
       isGPOnly: true,
     },
@@ -101,26 +103,26 @@ export default function ProfileScreen() {
     ...gpMenuItems,
     {
       icon: User,
-      title: 'Modifier le profil',
-      subtitle: 'Mettre à jour vos informations personnelles',
+      title: t('profile.editProfile'),
+      subtitle: t('profile.editProfileSub'),
       onPress: () => router.push('/edit-profile'),
     },
     {
       icon: Bell,
-      title: 'Notifications',
-      subtitle: 'Configurer vos préférences de notification',
+      title: t('profile.notifications'),
+      subtitle: t('profile.notificationsSub'),
       onPress: () => router.push('/notifications'),
     },
     {
       icon: Settings,
-      title: 'Paramètres',
-      subtitle: 'Préférences de l\'application et confidentialité',
+      title: t('profile.settings'),
+      subtitle: t('profile.settingsSub'),
       onPress: () => router.push('/settings'),
     },
     {
       icon: HelpCircle,
-      title: 'Aide & Support',
-      subtitle: 'Obtenir de l\'aide ou contacter le support',
+      title: t('profile.helpSupport'),
+      subtitle: t('profile.helpSupportSub'),
       onPress: () => router.push('/help-support'),
     },
   ];
@@ -128,17 +130,17 @@ export default function ProfileScreen() {
   const legalItems = [
     {
       icon: Shield,
-      title: 'Politique de confidentialité',
+      title: t('profile.privacyPolicy'),
       onPress: () => router.push('/privacy'),
     },
     {
       icon: FileText,
-      title: 'Conditions d\'utilisation',
+      title: t('profile.terms'),
       onPress: () => router.push('/terms'),
     },
     {
       icon: Mail,
-      title: 'Contact',
+      title: t('profile.contact'),
       onPress: () => router.push('/contact'),
     },
   ];
@@ -165,10 +167,10 @@ export default function ProfileScreen() {
           <Text style={styles.userName}>
             {hasProfile && userProfile
               ? `${userProfile.firstName} ${userProfile.lastName}`
-              : 'Invité'}
+              : t('profile.guest')}
           </Text>
           <Text style={styles.userEmail}>
-            {hasProfile && userProfile ? userProfile.contact : 'Connectez-vous pour commencer'}
+            {hasProfile && userProfile ? userProfile.contact : t('profile.connectToStart')}
           </Text>
           
           {!hasProfile && (
@@ -176,7 +178,7 @@ export default function ProfileScreen() {
               style={styles.loginButton}
               onPress={() => router.push('/auth')}
             >
-              <Text style={styles.loginButtonText}>Se connecter ou S&apos;inscrire</Text>
+              <Text style={styles.loginButtonText}>{t('profile.loginOrRegister')}</Text>
             </TouchableOpacity>
           )}
           
@@ -184,18 +186,18 @@ export default function ProfileScreen() {
           {isGPSubscribed ? (
             <View style={styles.gpBadge}>
               <CheckCircle size={16} color="white" />
-              <Text style={styles.gpBadgeText}>Grand Passager Actif</Text>
+              <Text style={styles.gpBadgeText}>{t('profile.activeGP')}</Text>
             </View>
           ) : hasProfile ? (
             <View>
               <View style={styles.regularUserBadge}>
-                <Text style={styles.regularUserBadgeText}>Particulier</Text>
+                <Text style={styles.regularUserBadgeText}>{t('profile.individual')}</Text>
               </View>
               <TouchableOpacity 
                 style={styles.becomeGPButton}
                 onPress={handleBecomeGP}
               >
-                <Text style={styles.becomeGPText}>Devenir un GP - 10 000 F/mois</Text>
+                <Text style={styles.becomeGPText}>{t('profile.becomeGP')}</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -203,7 +205,7 @@ export default function ProfileScreen() {
               style={styles.becomeGPButton}
               onPress={handleBecomeGP}
             >
-              <Text style={styles.becomeGPText}>Devenir un GP - 10 000 F/mois</Text>
+              <Text style={styles.becomeGPText}>{t('profile.becomeGP')}</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -214,17 +216,17 @@ export default function ProfileScreen() {
         <View style={styles.statCard}>
           <Package size={24} color="#FF6B35" />
           <Text style={styles.statNumber}>12</Text>
-          <Text style={styles.statLabel}>Colis envoyés</Text>
+          <Text style={styles.statLabel}>{t('profile.parcelsSent')}</Text>
         </View>
         <View style={styles.statCard}>
           <Star size={24} color="#FFD700" />
           <Text style={styles.statNumber}>4.8</Text>
-          <Text style={styles.statLabel}>Note</Text>
+          <Text style={styles.statLabel}>{t('profile.rating')}</Text>
         </View>
         <View style={styles.statCard}>
           <MapPin size={24} color="#28A745" />
           <Text style={styles.statNumber}>{gpTravels.length}</Text>
-          <Text style={styles.statLabel}>Voyages</Text>
+          <Text style={styles.statLabel}>{t('profile.travels')}</Text>
         </View>
       </View>
 
@@ -232,9 +234,9 @@ export default function ProfileScreen() {
       {isGPSubscribed && gpTravels.length > 0 && (
         <View style={styles.travelsSection}>
           <View style={styles.travelsSectionHeader}>
-            <Text style={styles.travelsSectionTitle}>Mes voyages actifs</Text>
+            <Text style={styles.travelsSectionTitle}>{t('profile.myActiveTravels')}</Text>
             <TouchableOpacity onPress={() => router.push('/gp-travels')}>
-              <Text style={styles.viewAllText}>Voir tout</Text>
+              <Text style={styles.viewAllText}>{t('profile.viewAll')}</Text>
             </TouchableOpacity>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.travelsScroll}>
@@ -284,7 +286,7 @@ export default function ProfileScreen() {
 
       {/* Legal & Contact */}
       <View style={styles.legalContainer}>
-        <Text style={styles.legalSectionTitle}>Légal & Contact</Text>
+        <Text style={styles.legalSectionTitle}>{t('profile.legalContact')}</Text>
         {legalItems.map((item) => (
           <TouchableOpacity
             key={item.title}
@@ -305,12 +307,12 @@ export default function ProfileScreen() {
         style={styles.logoutButton}
         onPress={() => {
           Alert.alert(
-            'Déconnexion',
+            t('profile.logout'),
             'Êtes-vous sûr de vouloir vous déconnecter ?',
             [
-              { text: 'Annuler', style: 'cancel' },
+              { text: t('common.cancel'), style: 'cancel' },
               {
-                text: 'Se déconnecter',
+                text: t('profile.logout'),
                 style: 'destructive',
                 onPress: async () => {
                   await clearUserProfile();
@@ -322,14 +324,14 @@ export default function ProfileScreen() {
         }}
       >
         <LogOut size={20} color="#DC3545" />
-        <Text style={styles.logoutText}>Se déconnecter</Text>
+        <Text style={styles.logoutText}>{t('profile.logout')}</Text>
       </TouchableOpacity>
 
       {/* App Info */}
       <View style={styles.appInfo}>
-        <Text style={styles.appVersion}>GP Connect v1.0.0</Text>
+        <Text style={styles.appVersion}>{t('profile.version')}</Text>
         <Text style={styles.appDescription}>
-          Connecter l&apos;Afrique au monde, un colis à la fois
+          {t('profile.description')}
         </Text>
       </View>
 
