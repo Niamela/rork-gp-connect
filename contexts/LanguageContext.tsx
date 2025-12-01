@@ -616,6 +616,134 @@ const translations: Translations = {
     fr: 'Réinitialiser',
     en: 'Reset',
   },
+  'tabs.home': {
+    fr: 'Accueil',
+    en: 'Home',
+  },
+  'tabs.browse': {
+    fr: 'Parcourir',
+    en: 'Browse',
+  },
+  'tabs.requests': {
+    fr: 'Annonces',
+    en: 'Ads',
+  },
+  'tabs.messages': {
+    fr: 'Messages',
+    en: 'Messages',
+  },
+  'tabs.profile': {
+    fr: 'Profil',
+    en: 'Profile',
+  },
+  'becomeGP.headerTitle': {
+    fr: 'Devenir Grand Passager',
+    en: 'Become Grand Passenger',
+  },
+  'becomeGP.headerSubtitle': {
+    fr: 'Transformez vos voyages en opportunité et aidez les autres à envoyer leurs colis',
+    en: 'Turn your trips into opportunities and help others send their parcels',
+  },
+  'becomeGP.pricePerMonth': {
+    fr: '/ mois',
+    en: '/ month',
+  },
+  'becomeGP.priceDescription': {
+    fr: 'Sans engagement • Annulez à tout moment',
+    en: 'No commitment • Cancel anytime',
+  },
+  'becomeGP.howItWorks': {
+    fr: 'Comment ça marche ?',
+    en: 'How does it work?',
+  },
+  'becomeGP.step1Title': {
+    fr: 'Créez votre profil GP',
+    en: 'Create your GP profile',
+  },
+  'becomeGP.step1Desc': {
+    fr: 'Remplissez vos informations personnelles et professionnelles',
+    en: 'Fill in your personal and professional information',
+  },
+  'becomeGP.step2Title': {
+    fr: 'Souscrivez à l\'abonnement',
+    en: 'Subscribe to the plan',
+  },
+  'becomeGP.step2Desc': {
+    fr: 'Abonnement mensuel de 10 000 F pour accéder à toutes les fonctionnalités',
+    en: 'Monthly subscription of 10,000 F to access all features',
+  },
+  'becomeGP.step3Title': {
+    fr: 'Publiez vos voyages',
+    en: 'Publish your trips',
+  },
+  'becomeGP.step3Desc': {
+    fr: 'Partagez vos dates de voyage et l\'espace disponible',
+    en: 'Share your travel dates and available space',
+  },
+  'becomeGP.step4Title': {
+    fr: 'Recevez des demandes',
+    en: 'Receive requests',
+  },
+  'becomeGP.step4Desc': {
+    fr: 'Les particuliers vous contactent pour leurs besoins d\'envoi',
+    en: 'Individuals contact you for their shipping needs',
+  },
+  'becomeGP.benefitsIncluded': {
+    fr: 'Avantages inclus',
+    en: 'Benefits included',
+  },
+  'becomeGP.benefit1': {
+    fr: 'Publiez autant de voyages que vous souhaitez',
+    en: 'Publish as many trips as you want',
+  },
+  'becomeGP.benefit2': {
+    fr: 'Accédez à toutes les demandes des particuliers',
+    en: 'Access all individual requests',
+  },
+  'becomeGP.benefit3': {
+    fr: 'Messagerie directe avec les clients',
+    en: 'Direct messaging with customers',
+  },
+  'becomeGP.benefit4': {
+    fr: 'Profil vérifié et badge GP',
+    en: 'Verified profile and GP badge',
+  },
+  'becomeGP.benefit5': {
+    fr: 'Visibilité accrue dans les recherches',
+    en: 'Increased visibility in searches',
+  },
+  'becomeGP.benefit6': {
+    fr: 'Support prioritaire',
+    en: 'Priority support',
+  },
+  'becomeGP.benefit7': {
+    fr: 'Gestion simplifiée de vos annonces',
+    en: 'Simplified management of your listings',
+  },
+  'becomeGP.differenceTitle': {
+    fr: 'Quelle est la différence ?',
+    en: 'What is the difference?',
+  },
+  'becomeGP.individualLabel': {
+    fr: 'Particulier',
+    en: 'Individual',
+  },
+  'becomeGP.individualDesc': {
+    fr: '• Publier des demandes d\'envoi gratuitement\n• Voir tous les voyages disponibles\n• Recevoir des messages des GPs',
+    en: '• Post shipping requests for free\n• View all available trips\n• Receive messages from GPs',
+  },
+  'becomeGP.gpLabel': {
+    fr: 'Grand Passager (GP)',
+    en: 'Grand Passenger (GP)',
+  },
+  'becomeGP.gpDesc': {
+    fr: '• Publier des voyages illimités\n• Contacter toutes les demandes\n• Badge vérifié et profil visible\n• Monétiser vos voyages',
+    en: '• Publish unlimited trips\n• Contact all requests\n• Verified badge and visible profile\n• Monetize your trips',
+  },
+  'becomeGP.getStarted': {
+    fr: 'Commencer maintenant',
+    en: 'Get started now',
+  },
 }
 
 const LANGUAGE_STORAGE_KEY = '@gp_connect_language';
