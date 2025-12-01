@@ -85,7 +85,7 @@ export default function CreateGPProfileScreen() {
           </Text>
         </LinearGradient>
 
-      <View style={styles.content}>
+        <View style={styles.content}>
         <View style={styles.infoCard}>
           <CheckCircle size={24} color="#4CAF50" />
           <View style={styles.infoTextContainer}>
@@ -196,7 +196,7 @@ export default function CreateGPProfileScreen() {
             .
           </Text>
         </View>
-      </View>
+        </View>
       </ScrollView>
     </View>
   );
