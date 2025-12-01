@@ -8,25 +8,23 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import { Search, Filter, Star, MapPin, Package, Clock, MessageCircle } from 'lucide-react-native';
+import { Search, Filter, MapPin, Package, Clock, MessageCircle } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { trpc } from '@/lib/trpc';
+import { useTravels } from '@/contexts/TravelsContext';
 import { useUser } from '@/contexts/UserContext';
+import { useMessages } from '@/contexts/MessagesContext';
 import { useRouter } from 'expo-router';
+import type { TravelAnnouncement } from '@/contexts/UserContext';
 
 export default function BrowseScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { userProfile } = useUser();
+  const { travels, isLoading } = useTravels();
+  const { createConversation } = useMessages();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all');
 
-  const travelsQuery = trpc.travels.getAll.useQuery();
-  const createConversationMutation = trpc.messages.createConversation.useMutation();
-  
-  const travels = travelsQuery.data || [];
-
-  const handleContactGP = async (travel: any, gpName: string) => {
+  const handleContactGP = async (travel: TravelAnnouncement, gpName: string) => {
     if (!userProfile) {
       Alert.alert(
         'Connexion requise',
@@ -40,7 +38,7 @@ export default function BrowseScreen() {
     }
 
     try {
-      const conversation = await createConversationMutation.mutateAsync({
+      await createConversation({
         userId: userProfile.id,
         otherUserId: travel.gpId,
         otherUserName: gpName,
@@ -55,7 +53,7 @@ export default function BrowseScreen() {
     }
   };
 
-  const filteredTravels = travels.filter(travel => {
+  const filteredTravels = travels.filter((travel: TravelAnnouncement) => {
     const route = `${travel.fromCountry} → ${travel.toCountry}`;
     const matchesSearch = route.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
@@ -63,7 +61,6 @@ export default function BrowseScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Search Header */}
       <View style={[styles.searchHeader, { paddingTop: insets.top + 16 }]}>
         <View style={styles.searchContainer}>
           <Search size={20} color="#6C757D" style={styles.searchIcon} />
@@ -80,13 +77,12 @@ export default function BrowseScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Results */}
       <ScrollView style={styles.resultsContainer} showsVerticalScrollIndicator={false}>
         <Text style={styles.resultsCount}>
           {filteredTravels.length} voyage{filteredTravels.length !== 1 ? 's' : ''} trouvé{filteredTravels.length !== 1 ? 's' : ''}
         </Text>
 
-        {travelsQuery.isLoading ? (
+        {isLoading ? (
           <View style={styles.loadingContainer}>
             <Text style={styles.loadingText}>Chargement...</Text>
           </View>
@@ -95,7 +91,7 @@ export default function BrowseScreen() {
             <Text style={styles.emptyText}>Aucun voyage disponible pour le moment</Text>
           </View>
         ) : (
-          filteredTravels.map((travel) => {
+          filteredTravels.map((travel: TravelAnnouncement) => {
             const gpName = 'GP Voyageur';
             return (
               <TouchableOpacity 
@@ -283,20 +279,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 10,
     fontWeight: '600',
-  },
-  gpRating: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  ratingText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#2C3E50',
-  },
-  tripsText: {
-    fontSize: 12,
-    color: '#6C757D',
   },
   gpPrice: {
     alignItems: 'flex-end',

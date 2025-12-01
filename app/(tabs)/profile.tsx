@@ -28,7 +28,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
-import { trpc } from '@/lib/trpc';
+import { useTravels } from '@/contexts/TravelsContext';
+import type { TravelAnnouncement } from '@/contexts/UserContext';
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -38,12 +39,8 @@ export default function ProfileScreen() {
   
   const isGPSubscribed = userProfile?.isGP && userProfile?.gpSubscription?.isActive;
   
-  const travelsQuery = trpc.travels.getGpTravels.useQuery(
-    { gpId: userProfile?.id || '' },
-    { enabled: !!userProfile?.id && isGPSubscribed }
-  );
-  
-  const gpTravels = travelsQuery.data || [];
+  const { getGpTravels } = useTravels();
+  const gpTravels = userProfile?.id ? getGpTravels(userProfile.id) : [];
   
   const handleBecomeGP = () => {
     if (!hasProfile) {

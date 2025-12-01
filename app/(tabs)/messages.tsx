@@ -13,32 +13,11 @@ import {
 import { MessageCircle, Send, ArrowLeft, User } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
-import { trpc } from '@/lib/trpc';
+import { useMessages } from '@/contexts/MessagesContext';
+import type { Conversation, Message } from '@/contexts/MessagesContext';
 import { useRouter } from 'expo-router';
 
-interface Conversation {
-  id: string;
-  participants: Array<{
-    userId: string;
-    userName: string;
-    isGP: boolean;
-  }>;
-  lastMessage?: string;
-  lastMessageTime?: string;
-  createdAt: string;
-  requestId?: string;
-  travelId?: string;
-}
 
-interface Message {
-  id: string;
-  conversationId: string;
-  senderId: string;
-  senderName: string;
-  content: string;
-  timestamp: string;
-  read: boolean;
-}
 
 export default function MessagesScreen() {
   const insets = useSafeAreaInsets();
@@ -48,29 +27,21 @@ export default function MessagesScreen() {
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messageInput, setMessageInput] = useState('');
 
-  const conversationsQuery = trpc.messages.getConversations.useQuery(
-    { userId: userProfile?.id || '' },
-    { enabled: !!userProfile?.id }
-  );
+  const { 
+    getConversationsByUserId, 
+    getMessagesByConversationId, 
+    sendMessage: sendMessageToConversation,
+    markAsRead,
+    isLoading
+  } = useMessages();
 
-  const messagesQuery = trpc.messages.getMessages.useQuery(
-    { conversationId: selectedConversation?.id || '' },
-    { enabled: !!selectedConversation?.id }
-  );
-
-  const sendMessageMutation = trpc.messages.sendMessage.useMutation();
-  const markAsReadMutation = trpc.messages.markAsRead.useMutation();
-
-  const conversations = conversationsQuery.data || [];
-  const messages = messagesQuery.data || [];
+  const conversations = userProfile?.id ? getConversationsByUserId(userProfile.id) : [];
+  const messages = selectedConversation?.id ? getMessagesByConversationId(selectedConversation.id) : [];
 
   const handleSelectConversation = async (conversation: Conversation) => {
     setSelectedConversation(conversation);
     if (userProfile?.id) {
-      await markAsReadMutation.mutateAsync({
-        conversationId: conversation.id,
-        userId: userProfile.id,
-      });
+      await markAsRead(conversation.id, userProfile.id);
     }
   };
 
@@ -78,14 +49,12 @@ export default function MessagesScreen() {
     if (!messageInput.trim() || !selectedConversation || !userProfile?.id) return;
 
     try {
-      await sendMessageMutation.mutateAsync({
+      await sendMessageToConversation({
         conversationId: selectedConversation.id,
         content: messageInput.trim(),
         userId: userProfile.id,
       });
       setMessageInput('');
-      await messagesQuery.refetch();
-      await conversationsQuery.refetch();
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -212,7 +181,7 @@ export default function MessagesScreen() {
         </Text>
       </View>
 
-      {conversationsQuery.isLoading ? (
+      {isLoading ? (
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>Chargement...</Text>
         </View>

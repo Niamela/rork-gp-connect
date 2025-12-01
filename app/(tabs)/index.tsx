@@ -11,8 +11,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Search, MapPin, Package, Clock, Star, Plane } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { trpc } from '@/lib/trpc';
-import type { TravelAnnouncement } from '@/backend/db/schema';
+import { useTravels } from '@/contexts/TravelsContext';
+import type { TravelAnnouncement } from '@/contexts/UserContext';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -22,8 +22,7 @@ export default function HomeScreen() {
   const [weight, setWeight] = useState('');
   const [date, setDate] = useState('');
 
-  const travelsQuery = trpc.travels.getAll.useQuery();
-  const travels = travelsQuery.data || [];
+  const { travels, isLoading } = useTravels();
   const featuredGPs = travels.slice(0, 2);
 
   return (
@@ -126,7 +125,7 @@ export default function HomeScreen() {
       <View style={styles.featuredSection}>
         <Text style={styles.sectionTitle}>GPs en vedette</Text>
         
-        {travelsQuery.isLoading ? (
+        {isLoading ? (
           <View style={styles.loadingContainer}>
             <Text style={styles.loadingText}>Chargement...</Text>
           </View>

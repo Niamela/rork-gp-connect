@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface TravelAnnouncement {
   id: string;
+  gpId: string;
   fromCountry: string;
   toCountry: string;
   departureDate: string;
