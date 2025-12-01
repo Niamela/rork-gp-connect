@@ -117,7 +117,7 @@ export default function MessagesScreen() {
             <User size={20} color="#FF6B35" />
           </View>
           <View style={styles.chatHeaderInfo}>
-            <Text style={styles.chatHeaderName}>{otherParticipant?.userName}</Text>
+            <Text style={styles.chatHeaderName}>{otherParticipant?.userName || 'Utilisateur'}</Text>
             <Text style={styles.chatHeaderStatus}>
               {otherParticipant?.isGP ? 'Grand Passager' : 'Particulier'}
             </Text>
@@ -209,7 +209,7 @@ export default function MessagesScreen() {
                 <View style={styles.conversationInfo}>
                   <View style={styles.conversationHeader}>
                     <Text style={styles.conversationName}>
-                      {otherParticipant?.userName}
+                      {otherParticipant?.userName || 'Utilisateur'}
                     </Text>
                     {conversation.lastMessageTime && (
                       <Text style={styles.conversationTime}>
