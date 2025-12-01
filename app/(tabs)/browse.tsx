@@ -8,8 +8,9 @@ import {
   TextInput,
   Alert,
   Image,
+  Modal,
 } from 'react-native';
-import { Search, Filter, MapPin, Package, Clock, MessageCircle } from 'lucide-react-native';
+import { Search, Filter, MapPin, Package, Clock, MessageCircle, X } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTravels } from '@/contexts/TravelsContext';
 import { useUser } from '@/contexts/UserContext';
@@ -25,6 +26,12 @@ export default function BrowseScreen() {
   const { createConversation } = useMessages();
   const travelsWithInfo = getTravelsWithGPInfo();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [filterFrom, setFilterFrom] = useState('');
+  const [filterTo, setFilterTo] = useState('');
+  const [filterMaxWeight, setFilterMaxWeight] = useState('');
+  const [filterDate, setFilterDate] = useState('');
+  const [filterMaxPrice, setFilterMaxPrice] = useState('');
 
   const handleContactGP = async (travel: TravelAnnouncement, gpName: string) => {
     if (!userProfile) {
@@ -57,9 +64,31 @@ export default function BrowseScreen() {
 
   const filteredTravels = travelsWithInfo.filter((travel) => {
     const route = `${travel.fromCountry} → ${travel.toCountry}`;
-    const matchesSearch = route.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
+    const gpName = travel.gpProfile 
+      ? `${travel.gpProfile.firstName} ${travel.gpProfile.lastName}` 
+      : 'GP Voyageur';
+    const matchesSearch = !searchQuery || 
+      route.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      gpName.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesFilterFrom = !filterFrom || travel.fromCountry.toLowerCase().includes(filterFrom.toLowerCase());
+    const matchesFilterTo = !filterTo || travel.toCountry.toLowerCase().includes(filterTo.toLowerCase());
+    const matchesFilterWeight = !filterMaxWeight || parseFloat(travel.maxWeight) >= parseFloat(filterMaxWeight);
+    const matchesFilterDate = !filterDate || travel.departureDate.includes(filterDate);
+    const matchesFilterPrice = !filterMaxPrice || parseFloat(travel.pricePerKg) <= parseFloat(filterMaxPrice);
+    
+    return matchesSearch && matchesFilterFrom && matchesFilterTo && matchesFilterWeight && matchesFilterDate && matchesFilterPrice;
   });
+  
+  const hasActiveFilters = filterFrom || filterTo || filterMaxWeight || filterDate || filterMaxPrice;
+  
+  const clearFilters = () => {
+    setFilterFrom('');
+    setFilterTo('');
+    setFilterMaxWeight('');
+    setFilterDate('');
+    setFilterMaxPrice('');
+  };
 
   return (
     <View style={styles.container}>
@@ -74,15 +103,25 @@ export default function BrowseScreen() {
             placeholderTextColor="#999"
           />
         </View>
-        <TouchableOpacity style={styles.filterButton}>
-          <Filter size={20} color="#FF6B35" />
+        <TouchableOpacity 
+          style={[styles.filterButton, hasActiveFilters && styles.filterButtonActive]}
+          onPress={() => setShowFilterModal(true)}
+        >
+          <Filter size={20} color={hasActiveFilters ? 'white' : '#FF6B35'} />
         </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.resultsContainer} showsVerticalScrollIndicator={false}>
-        <Text style={styles.resultsCount}>
-          {filteredTravels.length} voyage{filteredTravels.length !== 1 ? 's' : ''} trouvé{filteredTravels.length !== 1 ? 's' : ''}
-        </Text>
+        <View style={styles.resultsHeader}>
+          <Text style={styles.resultsCount}>
+            {filteredTravels.length} voyage{filteredTravels.length !== 1 ? 's' : ''} trouvé{filteredTravels.length !== 1 ? 's' : ''}
+          </Text>
+          {hasActiveFilters && (
+            <TouchableOpacity onPress={clearFilters} style={styles.clearFiltersButton}>
+              <Text style={styles.clearFiltersText}>Réinitialiser</Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
@@ -170,6 +209,116 @@ export default function BrowseScreen() {
           })
         )}
       </ScrollView>
+
+      <Modal
+        visible={showFilterModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowFilterModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Filtres de recherche</Text>
+              <TouchableOpacity onPress={() => setShowFilterModal(false)}>
+                <X size={24} color="#2C3E50" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
+              <View style={styles.filterGroup}>
+                <Text style={styles.filterLabel}>Pays de départ</Text>
+                <View style={styles.filterInputContainer}>
+                  <MapPin size={18} color="#FF6B35" />
+                  <TextInput
+                    style={styles.filterInput}
+                    placeholder="Ex: France"
+                    value={filterFrom}
+                    onChangeText={setFilterFrom}
+                    placeholderTextColor="#999"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.filterGroup}>
+                <Text style={styles.filterLabel}>Pays d&apos;arrivée</Text>
+                <View style={styles.filterInputContainer}>
+                  <MapPin size={18} color="#FF6B35" />
+                  <TextInput
+                    style={styles.filterInput}
+                    placeholder="Ex: Sénégal"
+                    value={filterTo}
+                    onChangeText={setFilterTo}
+                    placeholderTextColor="#999"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.filterGroup}>
+                <Text style={styles.filterLabel}>Poids minimum disponible (kg)</Text>
+                <View style={styles.filterInputContainer}>
+                  <Package size={18} color="#FF6B35" />
+                  <TextInput
+                    style={styles.filterInput}
+                    placeholder="Ex: 5"
+                    value={filterMaxWeight}
+                    onChangeText={setFilterMaxWeight}
+                    keyboardType="numeric"
+                    placeholderTextColor="#999"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.filterGroup}>
+                <Text style={styles.filterLabel}>Date de départ</Text>
+                <View style={styles.filterInputContainer}>
+                  <Clock size={18} color="#FF6B35" />
+                  <TextInput
+                    style={styles.filterInput}
+                    placeholder="Ex: 2025-01 ou Janvier"
+                    value={filterDate}
+                    onChangeText={setFilterDate}
+                    placeholderTextColor="#999"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.filterGroup}>
+                <Text style={styles.filterLabel}>Prix maximum (F/kg)</Text>
+                <View style={styles.filterInputContainer}>
+                  <Text style={styles.filterCurrencyIcon}>F</Text>
+                  <TextInput
+                    style={styles.filterInput}
+                    placeholder="Ex: 5000"
+                    value={filterMaxPrice}
+                    onChangeText={setFilterMaxPrice}
+                    keyboardType="numeric"
+                    placeholderTextColor="#999"
+                  />
+                </View>
+              </View>
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <TouchableOpacity 
+                style={styles.clearButton}
+                onPress={clearFilters}
+              >
+                <Text style={styles.clearButtonText}>Réinitialiser</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.applyButton}
+                onPress={() => {
+                  setShowFilterModal(false);
+                  console.log('[Filter] Applied filters:', { filterFrom, filterTo, filterMaxWeight, filterDate, filterMaxPrice });
+                }}
+              >
+                <Text style={styles.applyButtonText}>Appliquer</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -213,14 +362,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
     borderRadius: 12,
   },
+  filterButtonActive: {
+    backgroundColor: '#FF6B35',
+  },
   resultsContainer: {
     flex: 1,
     padding: 16,
   },
+  resultsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
   resultsCount: {
     fontSize: 14,
     color: '#6C757D',
-    marginBottom: 16,
+  },
+  clearFiltersButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 8,
+  },
+  clearFiltersText: {
+    fontSize: 12,
+    color: '#FF6B35',
+    fontWeight: '600',
   },
   gpCard: {
     backgroundColor: 'white',
@@ -376,5 +544,95 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6C757D',
     textAlign: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E9ECEF',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2C3E50',
+  },
+  modalBody: {
+    padding: 20,
+  },
+  filterGroup: {
+    marginBottom: 20,
+  },
+  filterLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2C3E50',
+    marginBottom: 8,
+  },
+  filterInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#E9ECEF',
+    gap: 12,
+  },
+  filterInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#2C3E50',
+  },
+  filterCurrencyIcon: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FF6B35',
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    padding: 20,
+    gap: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#E9ECEF',
+  },
+  clearButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: '#F8F9FA',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  clearButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#6C757D',
+  },
+  applyButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: '#FF6B35',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  applyButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'white',
   },
 });

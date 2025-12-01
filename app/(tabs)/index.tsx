@@ -24,7 +24,21 @@ export default function HomeScreen() {
 
   const { getTravelsWithGPInfo, isLoading } = useTravels();
   const travelsWithInfo = getTravelsWithGPInfo();
-  const featuredGPs = travelsWithInfo.slice(0, 2);
+  
+  const filteredGPs = travelsWithInfo.filter((travel) => {
+    if (!fromCountry && !toCountry && !weight && !date) {
+      return true;
+    }
+    
+    const matchesFrom = !fromCountry || travel.fromCountry.toLowerCase().includes(fromCountry.toLowerCase());
+    const matchesTo = !toCountry || travel.toCountry.toLowerCase().includes(toCountry.toLowerCase());
+    const matchesWeight = !weight || parseFloat(travel.maxWeight) >= parseFloat(weight);
+    const matchesDate = !date || travel.departureDate.includes(date);
+    
+    return matchesFrom && matchesTo && matchesWeight && matchesDate;
+  });
+  
+  const featuredGPs = (fromCountry || toCountry || weight || date) ? filteredGPs : travelsWithInfo.slice(0, 2);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -115,7 +129,12 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.searchButton}>
+          <TouchableOpacity 
+            style={styles.searchButton}
+            onPress={() => {
+              console.log('[Search] Searching with criteria:', { fromCountry, toCountry, weight, date });
+            }}
+          >
             <Search size={20} color="white" />
             <Text style={styles.searchButtonText}>Rechercher des GPs</Text>
           </TouchableOpacity>
@@ -124,7 +143,14 @@ export default function HomeScreen() {
 
       {/* Featured GPs */}
       <View style={styles.featuredSection}>
-        <Text style={styles.sectionTitle}>GPs en vedette</Text>
+        <Text style={styles.sectionTitle}>
+          {(fromCountry || toCountry || weight || date) ? 'Résultats de recherche' : 'GPs en vedette'}
+        </Text>
+        {(fromCountry || toCountry || weight || date) && (
+          <Text style={styles.resultsCount}>
+            {filteredGPs.length} GP{filteredGPs.length !== 1 ? 's' : ''} trouvé{filteredGPs.length !== 1 ? 's' : ''}
+          </Text>
+        )}
         
         {isLoading ? (
           <View style={styles.loadingContainer}>
@@ -432,6 +458,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6C757D',
     textAlign: 'center',
+  },
+  resultsCount: {
+    fontSize: 14,
+    color: '#6C757D',
+    marginBottom: 12,
   },
   gpCtaSection: {
     paddingHorizontal: 20,
