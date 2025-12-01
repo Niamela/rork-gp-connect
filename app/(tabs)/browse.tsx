@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Image,
 } from 'react-native';
 import { Search, Filter, MapPin, Package, Clock, MessageCircle } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,8 +21,9 @@ export default function BrowseScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { userProfile } = useUser();
-  const { travels, isLoading } = useTravels();
+  const { getTravelsWithGPInfo, isLoading } = useTravels();
   const { createConversation } = useMessages();
+  const travelsWithInfo = getTravelsWithGPInfo();
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleContactGP = async (travel: TravelAnnouncement, gpName: string) => {
@@ -53,7 +55,7 @@ export default function BrowseScreen() {
     }
   };
 
-  const filteredTravels = travels.filter((travel: TravelAnnouncement) => {
+  const filteredTravels = travelsWithInfo.filter((travel) => {
     const route = `${travel.fromCountry} → ${travel.toCountry}`;
     const matchesSearch = route.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
@@ -91,8 +93,10 @@ export default function BrowseScreen() {
             <Text style={styles.emptyText}>Aucun voyage disponible pour le moment</Text>
           </View>
         ) : (
-          filteredTravels.map((travel: TravelAnnouncement) => {
-            const gpName = 'GP Voyageur';
+          filteredTravels.map((travel) => {
+            const gpName = travel.gpProfile 
+              ? `${travel.gpProfile.firstName} ${travel.gpProfile.lastName}` 
+              : 'GP Voyageur';
             return (
               <TouchableOpacity 
                 key={travel.id} 
@@ -102,7 +106,16 @@ export default function BrowseScreen() {
               >
                 <View style={styles.gpHeader}>
                   <View style={styles.gpAvatar}>
-                    <Text style={styles.gpAvatarText}>GP</Text>
+                    {travel.gpProfile?.profileImageUri ? (
+                      <Image 
+                        source={{ uri: travel.gpProfile.profileImageUri }} 
+                        style={styles.gpAvatarImage}
+                      />
+                    ) : (
+                      <Text style={styles.gpAvatarText}>
+                        {travel.gpProfile ? `${travel.gpProfile.firstName[0]}${travel.gpProfile.lastName[0]}` : 'GP'}
+                      </Text>
+                    )}
                   </View>
                   <View style={styles.gpInfo}>
                     <View style={styles.gpNameRow}>
@@ -233,6 +246,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    overflow: 'hidden',
+  },
+  gpAvatarImage: {
+    width: '100%',
+    height: '100%',
   },
   gpAvatarText: {
     color: 'white',
