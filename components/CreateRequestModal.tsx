@@ -13,6 +13,7 @@ import { X, MapPin, Package, Calendar, MessageCircle, Box } from 'lucide-react-n
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
 import { useRequests } from '@/contexts/RequestsContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CreateRequestModalProps {
   visible: boolean;
@@ -23,6 +24,7 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
   const insets = useSafeAreaInsets();
   const { userProfile } = useUser();
   const { addRequest } = useRequests();
+  const { t } = useLanguage();
   
   const [fromCountry, setFromCountry] = useState('');
   const [toCountry, setToCountry] = useState('');
@@ -34,12 +36,12 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
 
   const handlePublishRequest = async () => {
     if (!fromCountry || !toCountry || !weight || !date || !productType || !contactInfo) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
+      Alert.alert(t('createRequest.errorTitle'), t('createRequest.errorAllFields'));
       return;
     }
 
     if (!userProfile) {
-      Alert.alert('Erreur', 'Profil utilisateur introuvable');
+      Alert.alert(t('createRequest.errorTitle'), t('createRequest.errorNoProfile'));
       return;
     }
 
@@ -64,11 +66,11 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
       setDescription('');
       setContactInfo('');
       
-      Alert.alert('Succès', 'Votre demande a été publiée avec succès!');
+      Alert.alert(t('createRequest.successTitle'), t('createRequest.successMessage'));
       onClose();
     } catch (error) {
       console.error('Error creating request:', error);
-      Alert.alert('Erreur', 'Impossible de publier la demande. Veuillez réessayer.');
+      Alert.alert(t('createRequest.errorTitle'), t('createRequest.errorMessage'));
     }
   };
 
@@ -82,7 +84,7 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
       <View style={styles.modalOverlay}>
         <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Publier une demande</Text>
+            <Text style={styles.modalTitle}>{t('createRequest.modalTitle')}</Text>
             <TouchableOpacity onPress={onClose}>
               <X size={24} color="#2C3E50" />
             </TouchableOpacity>
@@ -90,12 +92,12 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
 
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.formGroup}>
-              <Text style={styles.label}>De (Pays) *</Text>
+              <Text style={styles.label}>{t('createRequest.fromCountry')} {t('createRequest.required')}</Text>
               <View style={styles.inputContainer}>
                 <MapPin size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex: Dubai"
+                  placeholder={t('createRequest.fromPlaceholder')}
                   value={fromCountry}
                   onChangeText={setFromCountry}
                   placeholderTextColor="#999"
@@ -104,12 +106,12 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Vers (Pays) *</Text>
+              <Text style={styles.label}>{t('createRequest.toCountry')} {t('createRequest.required')}</Text>
               <View style={styles.inputContainer}>
                 <MapPin size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex: Mali"
+                  placeholder={t('createRequest.toPlaceholder')}
                   value={toCountry}
                   onChangeText={setToCountry}
                   placeholderTextColor="#999"
@@ -118,12 +120,12 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Poids approximatif (kg) *</Text>
+              <Text style={styles.label}>{t('createRequest.weight')} {t('createRequest.required')}</Text>
               <View style={styles.inputContainer}>
                 <Package size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex: 15"
+                  placeholder={t('createRequest.weightPlaceholder')}
                   value={weight}
                   onChangeText={setWeight}
                   keyboardType="numeric"
@@ -133,12 +135,12 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Date souhaitée *</Text>
+              <Text style={styles.label}>{t('createRequest.date')} {t('createRequest.required')}</Text>
               <View style={styles.inputContainer}>
                 <Calendar size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex: 25 Jan 2025"
+                  placeholder={t('createRequest.datePlaceholder')}
                   value={date}
                   onChangeText={setDate}
                   placeholderTextColor="#999"
@@ -147,12 +149,12 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Type de produit *</Text>
+              <Text style={styles.label}>{t('createRequest.productType')} {t('createRequest.required')}</Text>
               <View style={styles.inputContainer}>
                 <Box size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex: Vêtements, Électronique, Documents..."
+                  placeholder={t('createRequest.productTypePlaceholder')}
                   value={productType}
                   onChangeText={setProductType}
                   placeholderTextColor="#999"
@@ -161,12 +163,12 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Contact (Téléphone ou Email) *</Text>
+              <Text style={styles.label}>{t('createRequest.contact')} {t('createRequest.required')}</Text>
               <View style={styles.inputContainer}>
                 <MessageCircle size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Ex: +223 XX XX XX XX"
+                  placeholder={t('createRequest.contactPlaceholder')}
                   value={contactInfo}
                   onChangeText={setContactInfo}
                   placeholderTextColor="#999"
@@ -175,10 +177,10 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Description (optionnel)</Text>
+              <Text style={styles.label}>{t('createRequest.description')}</Text>
               <TextInput
                 style={[styles.input, styles.textArea]}
-                placeholder="Décrivez votre colis et vos besoins..."
+                placeholder={t('createRequest.descriptionPlaceholder')}
                 value={description}
                 onChangeText={setDescription}
                 multiline
@@ -192,11 +194,11 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
               style={styles.publishButton}
               onPress={handlePublishRequest}
             >
-              <Text style={styles.publishButtonText}>Publier la demande</Text>
+              <Text style={styles.publishButtonText}>{t('createRequest.publishButton')}</Text>
             </TouchableOpacity>
 
             <Text style={styles.disclaimer}>
-              * Champs obligatoires. Votre demande sera visible par tous les GPs.
+              {t('createRequest.disclaimer')}
             </Text>
           </ScrollView>
         </View>

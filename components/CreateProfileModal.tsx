@@ -12,6 +12,7 @@ import {
 import { X, User, MapPin, MessageCircle, CheckCircle } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CreateProfileModalProps {
   visible: boolean;
@@ -22,6 +23,7 @@ interface CreateProfileModalProps {
 export default function CreateProfileModal({ visible, onClose, onSuccess }: CreateProfileModalProps) {
   const insets = useSafeAreaInsets();
   const { createProfile } = useUser();
+  const { t } = useLanguage();
   
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -30,7 +32,7 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
 
   const handleCreateProfile = async () => {
     if (!firstName || !lastName || !country || !contact) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
+      Alert.alert(t('createProfile.errorTitle'), t('createProfile.errorAllFields'));
       return;
     }
 
@@ -50,15 +52,15 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
       setContact('');
       
       Alert.alert(
-        'Profil créé',
-        'Votre profil a été créé avec succès. Vous pouvez maintenant publier des demandes.',
-        [{ text: 'OK', onPress: () => {
+        t('createProfile.successTitle'),
+        t('createProfile.successMessage'),
+        [{ text: t('common.ok'), onPress: () => {
           onClose();
           if (onSuccess) onSuccess();
         }}]
       );
     } catch {
-      Alert.alert('Erreur', 'Impossible de créer le profil. Veuillez réessayer.');
+      Alert.alert(t('createProfile.errorTitle'), t('createProfile.errorMessage'));
     }
   };
 
@@ -72,7 +74,7 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
       <View style={styles.modalOverlay}>
         <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Créer votre profil</Text>
+            <Text style={styles.modalTitle}>{t('createProfile.modalTitle')}</Text>
             <TouchableOpacity onPress={onClose}>
               <X size={24} color="#2C3E50" />
             </TouchableOpacity>
@@ -81,18 +83,17 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.profileInfoCard}>
               <Text style={styles.profileInfoText}>
-                Pour publier une demande, vous devez créer un profil gratuit.
-                Cela permet aux GPs de vous identifier et de vous contacter.
+                {t('createProfile.infoText')}
               </Text>
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Prénom *</Text>
+              <Text style={styles.label}>{t('createProfile.firstName')} {t('createProfile.required')}</Text>
               <View style={styles.inputContainer}>
                 <User size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Votre prénom"
+                  placeholder={t('createProfile.firstNamePlaceholder')}
                   value={firstName}
                   onChangeText={setFirstName}
                   placeholderTextColor="#999"
@@ -101,12 +102,12 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Nom *</Text>
+              <Text style={styles.label}>{t('createProfile.lastName')} {t('createProfile.required')}</Text>
               <View style={styles.inputContainer}>
                 <User size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Votre nom"
+                  placeholder={t('createProfile.lastNamePlaceholder')}
                   value={lastName}
                   onChangeText={setLastName}
                   placeholderTextColor="#999"
@@ -115,12 +116,12 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Pays *</Text>
+              <Text style={styles.label}>{t('createProfile.country')} {t('createProfile.required')}</Text>
               <View style={styles.inputContainer}>
                 <MapPin size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="Votre pays de résidence"
+                  placeholder={t('createProfile.countryPlaceholder')}
                   value={country}
                   onChangeText={setCountry}
                   placeholderTextColor="#999"
@@ -129,12 +130,12 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Contact (Téléphone ou Email) *</Text>
+              <Text style={styles.label}>{t('createProfile.contact')} {t('createProfile.required')}</Text>
               <View style={styles.inputContainer}>
                 <MessageCircle size={20} color="#FF6B35" />
                 <TextInput
                   style={styles.input}
-                  placeholder="+XXX XX XX XX XX ou email@example.com"
+                  placeholder={t('createProfile.contactPlaceholder')}
                   value={contact}
                   onChangeText={setContact}
                   placeholderTextColor="#999"
@@ -145,7 +146,7 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
             <View style={styles.verificationNote}>
               <CheckCircle size={16} color="#28A745" />
               <Text style={styles.verificationText}>
-                La vérification d&apos;identité sera disponible prochainement
+                {t('createProfile.verificationNote')}
               </Text>
             </View>
 
@@ -153,11 +154,11 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
               style={styles.publishButton}
               onPress={handleCreateProfile}
             >
-              <Text style={styles.publishButtonText}>Créer mon profil</Text>
+              <Text style={styles.publishButtonText}>{t('createProfile.createButton')}</Text>
             </TouchableOpacity>
 
             <Text style={styles.disclaimer}>
-              * Champs obligatoires. En créant un profil, vous acceptez nos conditions d&apos;utilisation et notre politique de confidentialité.
+              {t('createProfile.disclaimer')}
             </Text>
           </ScrollView>
         </View>
