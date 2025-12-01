@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
-import { ArrowLeft, Save, Camera } from 'lucide-react-native';
+import { ArrowLeft, Save, Camera, Trash2 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -53,6 +53,21 @@ export default function EditProfileScreen() {
       console.error('Error picking image:', error);
       Alert.alert('Erreur', 'Impossible de sélectionner l\'image');
     }
+  };
+
+  const deleteImage = () => {
+    Alert.alert(
+      'Supprimer la photo',
+      'Êtes-vous sûr de vouloir supprimer votre photo de profil ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Supprimer',
+          style: 'destructive',
+          onPress: () => setProfileImageUri(''),
+        },
+      ]
+    );
   };
 
   const handleSave = async () => {
@@ -120,7 +135,15 @@ export default function EditProfileScreen() {
                 <Camera size={20} color="white" />
               </View>
             </TouchableOpacity>
-            <Text style={styles.imageHint}>Appuyez pour changer la photo</Text>
+            <View style={styles.imageActionsContainer}>
+              <Text style={styles.imageHint}>Appuyez pour changer la photo</Text>
+              {profileImageUri && (
+                <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}>
+                  <Trash2 size={16} color="#DC3545" />
+                  <Text style={styles.deleteButtonText}>Supprimer</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
 
@@ -323,5 +346,25 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#6C757D',
     textAlign: 'center',
+  },
+  imageActionsContainer: {
+    alignItems: 'center',
+    gap: 12,
+  },
+  deleteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#FFF5F5',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#FFDDDD',
+  },
+  deleteButtonText: {
+    fontSize: 13,
+    color: '#DC3545',
+    fontWeight: '600',
   },
 });

@@ -23,6 +23,7 @@ import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
 import { useTravels } from '@/contexts/TravelsContext';
 import { useMessages } from '@/contexts/MessagesContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function GPProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -31,6 +32,7 @@ export default function GPProfileScreen() {
   const { userProfile } = useUser();
   const { getGpTravels } = useTravels();
   const { createConversation } = useMessages();
+  const { t } = useLanguage();
 
   const gpProfile = userProfile;
   const gpTravels = gpId ? getGpTravels(gpId as string) : [];
@@ -70,7 +72,7 @@ export default function GPProfileScreen() {
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <View style={[styles.loadingContainer, { paddingTop: insets.top }]}>
-          <Text style={styles.loadingText}>Chargement du profil...</Text>
+          <Text style={styles.loadingText}>{t('gpProfile.loadingProfile')}</Text>
         </View>
       </View>
     );
@@ -81,7 +83,7 @@ export default function GPProfileScreen() {
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <View style={[styles.loadingContainer, { paddingTop: insets.top }]}>
-          <Text style={styles.loadingText}>Profil non trouvé</Text>
+          <Text style={styles.loadingText}>{t('gpProfile.profileNotFound')}</Text>
         </View>
       </View>
     );
@@ -119,7 +121,7 @@ export default function GPProfileScreen() {
             {gpProfile.isGP && gpProfile.gpSubscription?.isActive && (
               <View style={styles.gpBadge}>
                 <CheckCircle size={16} color="white" />
-                <Text style={styles.gpBadgeText}>Grand Passager Vérifié</Text>
+                <Text style={styles.gpBadgeText}>{t('gpProfile.verifiedGP')}</Text>
               </View>
             )}
           </View>
@@ -129,32 +131,32 @@ export default function GPProfileScreen() {
           <View style={styles.statCard}>
             <Star size={24} color="#FFD700" />
             <Text style={styles.statNumber}>4.8</Text>
-            <Text style={styles.statLabel}>Note moyenne</Text>
+            <Text style={styles.statLabel}>{t('gpProfile.averageRating')}</Text>
           </View>
           <View style={styles.statCard}>
             <Package size={24} color="#FF6B35" />
             <Text style={styles.statNumber}>24</Text>
-            <Text style={styles.statLabel}>Colis livrés</Text>
+            <Text style={styles.statLabel}>{t('gpProfile.parcelsDelivered')}</Text>
           </View>
           <View style={styles.statCard}>
             <MapPin size={24} color="#28A745" />
             <Text style={styles.statNumber}>{gpTravels.length}</Text>
-            <Text style={styles.statLabel}>Voyages</Text>
+            <Text style={styles.statLabel}>{t('gpProfile.travels')}</Text>
           </View>
         </View>
 
         <View style={styles.infoSection}>
-          <Text style={styles.sectionTitle}>Informations de contact</Text>
+          <Text style={styles.sectionTitle}>{t('gpProfile.contactInfo')}</Text>
           <View style={styles.infoCard}>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Contact</Text>
+              <Text style={styles.infoLabel}>{t('gpProfile.contact')}</Text>
               <Text style={styles.infoValue}>{gpProfile.contact}</Text>
             </View>
             {gpProfile.isGP && (
               <>
                 <View style={styles.divider} />
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Membre depuis</Text>
+                  <Text style={styles.infoLabel}>{t('gpProfile.memberSince')}</Text>
                   <Text style={styles.infoValue}>
                     {new Date(gpProfile.createdAt).toLocaleDateString('fr-FR', {
                       month: 'long',
@@ -168,14 +170,14 @@ export default function GPProfileScreen() {
         </View>
 
         <View style={styles.travelsSection}>
-          <Text style={styles.sectionTitle}>Voyages disponibles ({gpTravels.length})</Text>
+          <Text style={styles.sectionTitle}>{t('gpProfile.availableTravels')} ({gpTravels.length})</Text>
           {false ? (
             <View style={styles.loadingCard}>
-              <Text style={styles.loadingText}>Chargement des voyages...</Text>
+              <Text style={styles.loadingText}>{t('gpProfile.loadingTravels')}</Text>
             </View>
           ) : gpTravels.length === 0 ? (
             <View style={styles.emptyCard}>
-              <Text style={styles.emptyText}>Aucun voyage disponible pour le moment</Text>
+              <Text style={styles.emptyText}>{t('gpProfile.noTravelsAvailable')}</Text>
             </View>
           ) : (
             gpTravels.map((travel: any) => (
@@ -190,22 +192,22 @@ export default function GPProfileScreen() {
                 <View style={styles.travelDetails}>
                   <View style={styles.detailRow}>
                     <Clock size={14} color="#6C757D" />
-                    <Text style={styles.detailText}>Départ: {travel.departureDate}</Text>
+                    <Text style={styles.detailText}>{t('gpProfile.departure')}: {travel.departureDate}</Text>
                   </View>
                   <View style={styles.detailRow}>
                     <Package size={14} color="#6C757D" />
-                    <Text style={styles.detailText}>Max: {travel.maxWeight}kg</Text>
+                    <Text style={styles.detailText}>{t('gpProfile.max')}: {travel.maxWeight}kg</Text>
                   </View>
                 </View>
 
                 <View style={styles.availableSpace}>
                   <Text style={styles.availableSpaceText}>
-                    Espace: {travel.availableSpace}
+                    {t('gpProfile.space')}: {travel.availableSpace}
                   </Text>
                 </View>
 
                 <View style={styles.priceContainer}>
-                  <Text style={styles.priceLabel}>Prix</Text>
+                  <Text style={styles.priceLabel}>{t('gpProfile.price')}</Text>
                   <Text style={styles.priceText}>{travel.pricePerKg} F/kg</Text>
                 </View>
               </View>
@@ -222,7 +224,7 @@ export default function GPProfileScreen() {
         >
           <MessageCircle size={20} color="white" />
           <Text style={styles.contactButtonText}>
-            {'Contacter ce GP'}
+            {t('gpProfile.contactGP')}
           </Text>
         </TouchableOpacity>
       </View>

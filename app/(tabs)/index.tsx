@@ -13,6 +13,7 @@ import { Search, MapPin, Package, Clock, Star, Plane } from 'lucide-react-native
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTravels, type TravelWithGPInfo } from '@/contexts/TravelsContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -24,6 +25,7 @@ export default function HomeScreen() {
 
   const { getTravelsWithGPInfo, isLoading } = useTravels();
   const travelsWithInfo = getTravelsWithGPInfo();
+  const { language, changeLanguage, t } = useLanguage();
   
   const filteredGPs = travelsWithInfo.filter((travel) => {
     if (!fromCountry && !toCountry && !weight && !date) {
@@ -47,10 +49,28 @@ export default function HomeScreen() {
         colors={['#FF6B35', '#F7931E']}
         style={[styles.header, { paddingTop: insets.top + 30 }]}
       >
+        <View style={styles.languageSelectorContainer}>
+          <TouchableOpacity
+            style={[styles.languageButton, language === 'fr' && styles.languageButtonActive]}
+            onPress={() => changeLanguage('fr')}
+          >
+            <Text style={[styles.languageButtonText, language === 'fr' && styles.languageButtonTextActive]}>
+              FR
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.languageButton, language === 'en' && styles.languageButtonActive]}
+            onPress={() => changeLanguage('en')}
+          >
+            <Text style={[styles.languageButtonText, language === 'en' && styles.languageButtonTextActive]}>
+              EN
+            </Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>GP Connect</Text>
+          <Text style={styles.headerTitle}>{t('home.title')}</Text>
           <Text style={styles.headerSubtitle}>
-            Livraison fiable de colis entre l&apos;Afrique et le monde
+            {t('home.subtitle')}
           </Text>
         </View>
       </LinearGradient>
@@ -68,8 +88,8 @@ export default function HomeScreen() {
           >
             <Plane size={24} color="white" />
             <View style={styles.gpCtaTextContainer}>
-              <Text style={styles.gpCtaTitle}>Devenir GP</Text>
-              <Text style={styles.gpCtaSubtitle}>Découvrez comment devenir Grand Passager</Text>
+              <Text style={styles.gpCtaTitle}>{t('home.becomeGP')}</Text>
+              <Text style={styles.gpCtaSubtitle}>{t('home.becomeGPSubtitle')}</Text>
             </View>
           </LinearGradient>
         </TouchableOpacity>
@@ -77,7 +97,7 @@ export default function HomeScreen() {
 
       {/* Search Form */}
       <View style={styles.searchSection}>
-        <Text style={styles.sectionTitle}>Trouver votre GP</Text>
+        <Text style={styles.sectionTitle}>{t('home.findGP')}</Text>
         
         <View style={styles.searchForm}>
           <View style={styles.inputGroup}>
@@ -85,7 +105,7 @@ export default function HomeScreen() {
               <MapPin size={20} color="#FF6B35" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="De (Pays)"
+                placeholder={t('home.from')}
                 value={fromCountry}
                 onChangeText={setFromCountry}
                 placeholderTextColor="#999"
@@ -96,7 +116,7 @@ export default function HomeScreen() {
               <MapPin size={20} color="#FF6B35" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Vers (Pays)"
+                placeholder={t('home.to')}
                 value={toCountry}
                 onChangeText={setToCountry}
                 placeholderTextColor="#999"
@@ -109,7 +129,7 @@ export default function HomeScreen() {
               <Package size={20} color="#FF6B35" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Poids (kg)"
+                placeholder={t('home.weight')}
                 value={weight}
                 onChangeText={setWeight}
                 keyboardType="numeric"
@@ -121,7 +141,7 @@ export default function HomeScreen() {
               <Clock size={20} color="#FF6B35" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Date de voyage"
+                placeholder={t('home.travelDate')}
                 value={date}
                 onChangeText={setDate}
                 placeholderTextColor="#999"
@@ -136,7 +156,7 @@ export default function HomeScreen() {
             }}
           >
             <Search size={20} color="white" />
-            <Text style={styles.searchButtonText}>Rechercher des GPs</Text>
+            <Text style={styles.searchButtonText}>{t('home.searchGPs')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -144,22 +164,22 @@ export default function HomeScreen() {
       {/* Featured GPs */}
       <View style={styles.featuredSection}>
         <Text style={styles.sectionTitle}>
-          {(fromCountry || toCountry || weight || date) ? 'Résultats de recherche' : 'GPs en vedette'}
+          {(fromCountry || toCountry || weight || date) ? t('home.searchResults') : t('home.featuredGPs')}
         </Text>
         {(fromCountry || toCountry || weight || date) && (
           <Text style={styles.resultsCount}>
-            {filteredGPs.length} GP{filteredGPs.length !== 1 ? 's' : ''} trouvé{filteredGPs.length !== 1 ? 's' : ''}
+            {t('home.gpFound', { s: filteredGPs.length !== 1 ? 's' : '' })}
           </Text>
         )}
         
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Chargement...</Text>
+            <Text style={styles.loadingText}>{t('home.loading')}</Text>
           </View>
         ) : featuredGPs.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Aucun GP disponible pour le moment</Text>
-            <Text style={styles.emptySubtext}>Les GPs apparaîtront ici une fois inscrits</Text>
+            <Text style={styles.emptyText}>{t('home.noGPAvailable')}</Text>
+            <Text style={styles.emptySubtext}>{t('home.gpsWillAppear')}</Text>
           </View>
         ) : (
           featuredGPs.map((travel: TravelWithGPInfo) => (
@@ -190,7 +210,7 @@ export default function HomeScreen() {
                   </Text>
                   <View style={styles.gpRating}>
                     <Star size={14} color="#FFD700" fill="#FFD700" />
-                    <Text style={styles.ratingText}>Nouveau</Text>
+                    <Text style={styles.ratingText}>{t('home.new')}</Text>
                   </View>
                 </View>
                 <View style={styles.gpPrice}>
@@ -203,8 +223,8 @@ export default function HomeScreen() {
                   <Text style={styles.routeText}>{travel.fromCountry} → {travel.toCountry}</Text>
                 </View>
                 <View style={styles.gpMeta}>
-                  <Text style={styles.metaText}>Départ: {travel.departureDate}</Text>
-                  <Text style={styles.metaText}>Max: {travel.maxWeight}kg</Text>
+                  <Text style={styles.metaText}>{t('home.departure')}: {travel.departureDate}</Text>
+                  <Text style={styles.metaText}>{t('home.max')}: {travel.maxWeight}kg</Text>
                 </View>
               </View>
             </TouchableOpacity>
@@ -216,15 +236,15 @@ export default function HomeScreen() {
       <View style={styles.statsSection}>
         <View style={styles.statCard}>
           <Text style={styles.statNumber}>500+</Text>
-          <Text style={styles.statLabel}>Colis livrés</Text>
+          <Text style={styles.statLabel}>{t('home.parcelsDelivered')}</Text>
         </View>
         <View style={styles.statCard}>
           <Text style={styles.statNumber}>50+</Text>
-          <Text style={styles.statLabel}>GPs actifs</Text>
+          <Text style={styles.statLabel}>{t('home.activeGPs')}</Text>
         </View>
         <View style={styles.statCard}>
           <Text style={styles.statNumber}>98%</Text>
-          <Text style={styles.statLabel}>Satisfaction</Text>
+          <Text style={styles.statLabel}>{t('home.satisfaction')}</Text>
         </View>
       </View>
 
@@ -496,5 +516,30 @@ const styles = StyleSheet.create({
   gpCtaSubtitle: {
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.9)',
+  },
+  languageSelectorContainer: {
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+    gap: 8,
+    marginBottom: 16,
+  },
+  languageButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  languageButtonActive: {
+    backgroundColor: 'white',
+  },
+  languageButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'white',
+  },
+  languageButtonTextActive: {
+    color: '#FF6B35',
   },
 });
