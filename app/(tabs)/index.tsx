@@ -6,13 +6,13 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Search, MapPin, Package, Clock, Star, Plane } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { useTravels } from '@/contexts/TravelsContext';
-import type { TravelAnnouncement } from '@/contexts/UserContext';
+import { useTravels, type TravelWithGPInfo } from '@/contexts/TravelsContext';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -22,8 +22,9 @@ export default function HomeScreen() {
   const [weight, setWeight] = useState('');
   const [date, setDate] = useState('');
 
-  const { travels, isLoading } = useTravels();
-  const featuredGPs = travels.slice(0, 2);
+  const { getTravelsWithGPInfo, isLoading } = useTravels();
+  const travelsWithInfo = getTravelsWithGPInfo();
+  const featuredGPs = travelsWithInfo.slice(0, 2);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -135,7 +136,7 @@ export default function HomeScreen() {
             <Text style={styles.emptySubtext}>Les GPs apparaîtront ici une fois inscrits</Text>
           </View>
         ) : (
-          featuredGPs.map((travel: TravelAnnouncement) => (
+          featuredGPs.map((travel: TravelWithGPInfo) => (
             <TouchableOpacity 
               key={travel.id} 
               style={styles.gpCard}
@@ -144,10 +145,23 @@ export default function HomeScreen() {
             >
               <View style={styles.gpHeader}>
                 <View style={styles.gpAvatar}>
-                  <Text style={styles.gpAvatarText}>GP</Text>
+                  {travel.gpProfile?.profileImageUri ? (
+                    <Image 
+                      source={{ uri: travel.gpProfile.profileImageUri }} 
+                      style={styles.gpAvatarImage}
+                    />
+                  ) : (
+                    <Text style={styles.gpAvatarText}>
+                      {travel.gpProfile ? `${travel.gpProfile.firstName[0]}${travel.gpProfile.lastName[0]}` : 'GP'}
+                    </Text>
+                  )}
                 </View>
                 <View style={styles.gpInfo}>
-                  <Text style={styles.gpName}>Grand Passager</Text>
+                  <Text style={styles.gpName}>
+                    {travel.gpProfile 
+                      ? `${travel.gpProfile.firstName} ${travel.gpProfile.lastName}` 
+                      : 'Grand Passager'}
+                  </Text>
                   <View style={styles.gpRating}>
                     <Star size={14} color="#FFD700" fill="#FFD700" />
                     <Text style={styles.ratingText}>Nouveau</Text>
@@ -301,6 +315,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    overflow: 'hidden',
+  },
+  gpAvatarImage: {
+    width: '100%',
+    height: '100%',
   },
   gpAvatarText: {
     color: 'white',

@@ -8,12 +8,14 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { User, Phone, MapPin, CheckCircle } from 'lucide-react-native';
+import { User, Phone, MapPin, CheckCircle, Camera } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '@/contexts/UserContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function CreateGPProfileScreen() {
   const router = useRouter();
@@ -27,6 +29,35 @@ export default function CreateGPProfileScreen() {
     contact: '',
     password: '',
   });
+  const [profileImageUri, setProfileImageUri] = useState('');
+
+  const pickImage = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permission requise',
+          'Veuillez autoriser l\'accès à la galerie pour sélectionner une photo'
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setProfileImageUri(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      Alert.alert('Erreur', 'Impossible de sélectionner l\'image');
+    }
+  };
 
   const handleSubmit = async () => {
     if (!formData.firstName || !formData.lastName || !formData.country || !formData.contact || !formData.password) {
@@ -45,6 +76,7 @@ export default function CreateGPProfileScreen() {
         contact: formData.contact,
         password: formData.password,
         isGP: false,
+        profileImageUri: profileImageUri || undefined,
       });
 
       console.log('[CreateGPProfile] Subscribing to GP...');
@@ -86,6 +118,23 @@ export default function CreateGPProfileScreen() {
         </LinearGradient>
 
         <View style={styles.content}>
+        <View style={styles.imageSection}>
+          <Text style={styles.sectionTitle}>Photo de profil</Text>
+          <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+            {profileImageUri ? (
+              <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
+            ) : (
+              <View style={styles.placeholderImage}>
+                <Camera size={40} color="#6C757D" />
+              </View>
+            )}
+            <View style={styles.cameraIconOverlay}>
+              <Camera size={20} color="white" />
+            </View>
+          </TouchableOpacity>
+          <Text style={styles.imageHint}>Photo qui apparaîtra dans vos annonces</Text>
+        </View>
+
         <View style={styles.infoCard}>
           <CheckCircle size={24} color="#4CAF50" />
           <View style={styles.infoTextContainer}>
@@ -316,5 +365,49 @@ const styles = StyleSheet.create({
   link: {
     color: '#4CAF50',
     fontWeight: '600',
+  },
+  imageSection: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  imageContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    overflow: 'hidden',
+    position: 'relative',
+    marginBottom: 12,
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
+  },
+  placeholderImage: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#F8F9FA',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#E9ECEF',
+    borderStyle: 'dashed',
+  },
+  cameraIconOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#4CAF50',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: 'white',
+  },
+  imageHint: {
+    fontSize: 13,
+    color: '#6C757D',
+    textAlign: 'center',
   },
 });
