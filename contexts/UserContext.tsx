@@ -1,7 +1,6 @@
 import createContextHook from '@nkzw/create-context-hook';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { trpc } from '@/lib/trpc';
 
 export interface TravelAnnouncement {
   id: string;
@@ -21,6 +20,7 @@ export interface UserProfile {
   lastName: string;
   country: string;
   contact: string;
+  password: string;
   isVerified: boolean;
   createdAt: string;
   isGP: boolean;
@@ -87,14 +87,11 @@ export const [UserProvider, useUser] = createContextHook(() => {
     loadUserProfile();
   }, [loadUserProfile]);
 
-  const createProfileMutation = trpc.users.createProfile.useMutation();
-  const updateProfileMutation = trpc.users.updateProfile.useMutation();
-  const subscribeGpMutation = trpc.users.subscribeGp.useMutation();
-
   const saveUserProfile = useCallback(async (profile: UserProfile) => {
     try {
       await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(profile));
       setUserProfile(profile);
+      console.log('[UserContext] Profile saved successfully');
     } catch (error) {
       console.error('Error saving user profile:', error);
       throw error;
@@ -103,53 +100,82 @@ export const [UserProvider, useUser] = createContextHook(() => {
 
   const createProfile = useCallback(async (data: CreateProfileInput) => {
     try {
-      const newProfile = await createProfileMutation.mutateAsync(data);
+      const newProfile: UserProfile = {
+        ...data,
+        id: Date.now().toString(),
+        isVerified: false,
+        createdAt: new Date().toISOString(),
+        isGP: data.isGP || false,
+      };
       await saveUserProfile(newProfile);
       return newProfile;
     } catch (error) {
       console.error('Error creating profile:', error);
       throw error;
     }
-  }, [createProfileMutation, saveUserProfile]);
+  }, [saveUserProfile]);
+
+  const loginUser = useCallback(async (contact: string, password: string) => {
+    try {
+      const stored = await AsyncStorage.getItem(USER_STORAGE_KEY);
+      if (!stored) {
+        throw new Error('Aucun profil trouvé');
+      }
+      
+      const profile = JSON.parse(stored);
+      if (profile.contact === contact && profile.password === password) {
+        setUserProfile(profile);
+        return profile;
+      } else {
+        throw new Error('Contact ou mot de passe incorrect');
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
+    }
+  }, []);
 
   const updateUserProfile = useCallback(async (updates: Partial<UserProfile>) => {
     if (!userProfile) return;
     
     try {
-      const updated = await updateProfileMutation.mutateAsync({
-        userId: userProfile.id,
-        updates,
-      });
-      await saveUserProfile(updated);
-      console.log('[UserContext] Profile updated successfully via backend');
-      return updated;
-    } catch (error) {
-      console.log('[UserContext] Backend update failed, updating locally:', error);
       const updated = { ...userProfile, ...updates };
       await saveUserProfile(updated);
+      console.log('[UserContext] Profile updated successfully');
       return updated;
+    } catch (error) {
+      console.error('[UserContext] Error updating profile:', error);
+      throw error;
     }
-  }, [userProfile, updateProfileMutation, saveUserProfile]);
+  }, [userProfile, saveUserProfile]);
 
   const subscribeAsGp = useCallback(async () => {
     if (!userProfile) throw new Error('Aucun profil utilisateur');
     
     try {
-      const updated = await subscribeGpMutation.mutateAsync({ userId: userProfile.id });
-      if (updated) {
-        await saveUserProfile(updated);
-      }
+      const gpSubscription = {
+        isActive: true,
+        startDate: new Date().toISOString(),
+        endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+        amount: 0,
+      };
+      
+      const updated = await updateUserProfile({
+        isGP: true,
+        gpSubscription,
+      });
       return updated;
     } catch (error) {
       console.error('Error subscribing as GP:', error);
       throw error;
     }
-  }, [userProfile, subscribeGpMutation, saveUserProfile]);
+  }, [userProfile, updateUserProfile]);
 
   const clearUserProfile = useCallback(async () => {
     try {
       await AsyncStorage.removeItem(USER_STORAGE_KEY);
       setUserProfile(null);
+      console.log('[UserContext] Profile cleared successfully');
     } catch (error) {
       console.error('Error clearing user profile:', error);
     }
@@ -206,6 +232,7 @@ export const [UserProvider, useUser] = createContextHook(() => {
     isLoading,
     hasProfile,
     createProfile,
+    loginUser,
     saveUserProfile,
     updateUserProfile,
     clearUserProfile,
@@ -213,5 +240,5 @@ export const [UserProvider, useUser] = createContextHook(() => {
     addTravelAnnouncement,
     updateTravelAnnouncement,
     deleteTravelAnnouncement,
-  }), [userProfile, isLoading, hasProfile, createProfile, saveUserProfile, updateUserProfile, clearUserProfile, subscribeAsGp, addTravelAnnouncement, updateTravelAnnouncement, deleteTravelAnnouncement]);
+  }), [userProfile, isLoading, hasProfile, createProfile, loginUser, saveUserProfile, updateUserProfile, clearUserProfile, subscribeAsGp, addTravelAnnouncement, updateTravelAnnouncement, deleteTravelAnnouncement]);
 });
