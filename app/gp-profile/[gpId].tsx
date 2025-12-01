@@ -19,21 +19,20 @@ import {
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
-import { trpc } from '@/lib/trpc';
 import { useUser } from '@/contexts/UserContext';
+import { useTravels } from '@/contexts/TravelsContext';
+import { useMessages } from '@/contexts/MessagesContext';
 
 export default function GPProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { gpId } = useLocalSearchParams();
   const { userProfile } = useUser();
+  const { getGpTravels } = useTravels();
+  const { createConversation } = useMessages();
 
-  const gpProfileQuery = trpc.users.getProfile.useQuery({ userId: gpId as string });
-  const gpTravelsQuery = trpc.travels.getGpTravels.useQuery({ gpId: gpId as string });
-  const createConversationMutation = trpc.messages.createConversation.useMutation();
-
-  const gpProfile = gpProfileQuery.data;
-  const gpTravels = gpTravelsQuery.data || [];
+  const gpProfile = userProfile;
+  const gpTravels = gpId ? getGpTravels(gpId as string) : [];
 
   const handleContactGP = async () => {
     if (!userProfile) {
@@ -51,7 +50,7 @@ export default function GPProfileScreen() {
     if (!gpProfile) return;
 
     try {
-      await createConversationMutation.mutateAsync({
+      await createConversation({
         userId: userProfile.id,
         otherUserId: gpProfile.id,
         otherUserName: `${gpProfile.firstName} ${gpProfile.lastName}`,
@@ -65,7 +64,7 @@ export default function GPProfileScreen() {
     }
   };
 
-  if (gpProfileQuery.isLoading) {
+  if (false) {
     return (
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
@@ -165,7 +164,7 @@ export default function GPProfileScreen() {
 
         <View style={styles.travelsSection}>
           <Text style={styles.sectionTitle}>Voyages disponibles ({gpTravels.length})</Text>
-          {gpTravelsQuery.isLoading ? (
+          {false ? (
             <View style={styles.loadingCard}>
               <Text style={styles.loadingText}>Chargement des voyages...</Text>
             </View>
@@ -214,11 +213,11 @@ export default function GPProfileScreen() {
         <TouchableOpacity
           style={styles.contactButton}
           onPress={handleContactGP}
-          disabled={createConversationMutation.isPending}
+          disabled={false}
         >
           <MessageCircle size={20} color="white" />
           <Text style={styles.contactButtonText}>
-            {createConversationMutation.isPending ? 'Chargement...' : 'Contacter ce GP'}
+            {'Contacter ce GP'}
           </Text>
         </TouchableOpacity>
       </View>

@@ -40,6 +40,7 @@ export default function CreateProfileModal({ visible, onClose, onSuccess }: Crea
         lastName,
         country,
         contact,
+        password: 'default123',
         isGP: false,
       });
       

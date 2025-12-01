@@ -24,12 +24,11 @@ import {
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
-import { trpc } from '@/lib/trpc';
 
 export default function GPTravelsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { userProfile } = useUser();
+  const { userProfile, addTravelAnnouncement, updateTravelAnnouncement, deleteTravelAnnouncement } = useUser();
   
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -44,15 +43,7 @@ export default function GPTravelsScreen() {
 
   const isGPSubscribed = userProfile?.isGP && userProfile?.gpSubscription?.isActive;
   
-  const travelsQuery = trpc.travels.getGpTravels.useQuery(
-    { gpId: userProfile?.id || '' },
-    { enabled: !!userProfile?.id && isGPSubscribed }
-  );
-  const createTravelMutation = trpc.travels.create.useMutation();
-  const updateTravelMutation = trpc.travels.update.useMutation();
-  const deleteTravelMutation = trpc.travels.delete.useMutation();
-  
-  const travelAnnouncements = travelsQuery.data || [];
+  const travelAnnouncements = userProfile?.gpTravelAnnouncements || [];
 
   const resetForm = () => {
     setFormData({
@@ -101,18 +92,13 @@ export default function GPTravelsScreen() {
 
     try {
       if (editingId) {
-        await updateTravelMutation.mutateAsync({
-          travelId: editingId,
-          updates: formData,
-        });
-        await travelsQuery.refetch();
+        await updateTravelAnnouncement(editingId, formData);
         Alert.alert('Succès', 'Annonce de voyage mise à jour avec succès.');
       } else {
-        await createTravelMutation.mutateAsync({
+        await addTravelAnnouncement({
           gpId: userProfile.id,
           ...formData,
         });
-        await travelsQuery.refetch();
         Alert.alert('Succès', 'Annonce de voyage ajoutée avec succès.');
       }
       handleCloseModal();
@@ -133,8 +119,7 @@ export default function GPTravelsScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await deleteTravelMutation.mutateAsync({ travelId: id });
-              await travelsQuery.refetch();
+              await deleteTravelAnnouncement(id);
               Alert.alert('Succès', 'Annonce de voyage supprimée avec succès.');
             } catch (error: any) {
               console.error('Error deleting travel announcement:', error);

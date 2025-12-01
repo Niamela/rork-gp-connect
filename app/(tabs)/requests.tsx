@@ -12,7 +12,8 @@ import {
 import { Plus, MapPin, Package, Calendar, User, X, MessageCircle, CheckCircle, Box, Trash2, Filter, Search, XCircle } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
-import { trpc } from '@/lib/trpc';
+import { useRequests } from '@/contexts/RequestsContext';
+import { useMessages } from '@/contexts/MessagesContext';
 import { useRouter } from 'expo-router';
 
 interface Request {
@@ -33,10 +34,8 @@ export default function RequestsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { hasProfile, userProfile, createProfile } = useUser();
-  
-  const requestsQuery = trpc.requests.getAll.useQuery();
-  const createRequestMutation = trpc.requests.create.useMutation();
-  const deleteRequestMutation = trpc.requests.delete.useMutation();
+  const { requests, addRequest, deleteRequest: deleteReq, isLoading } = useRequests();
+  const { createConversation } = useMessages();
   
   const [modalVisible, setModalVisible] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
@@ -60,7 +59,7 @@ export default function RequestsScreen() {
   const [description, setDescription] = useState('');
   const [contactInfo, setContactInfo] = useState('');
 
-  const requests = requestsQuery.data || [];
+
 
   const filteredRequests = requests.filter(request => {
     const matchesSearch = searchQuery === '' ||
@@ -101,6 +100,7 @@ export default function RequestsScreen() {
         lastName,
         country,
         contact,
+        password: 'default123',
         isGP: false,
       });
       
@@ -120,7 +120,7 @@ export default function RequestsScreen() {
     }
   };
 
-  const createConversationMutation = trpc.messages.createConversation.useMutation();
+
 
   const handleDeleteRequest = async (requestId: string) => {
     Alert.alert(
@@ -133,8 +133,7 @@ export default function RequestsScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await deleteRequestMutation.mutateAsync({ requestId });
-              await requestsQuery.refetch();
+              await deleteReq(requestId);
               Alert.alert('Succès', 'Demande supprimée avec succès');
             } catch (error) {
               console.error('Error deleting request:', error);
@@ -160,7 +159,7 @@ export default function RequestsScreen() {
     }
     
     try {
-      await createConversationMutation.mutateAsync({
+      await createConversation({
         userId: userProfile.id,
         otherUserId: request.userId,
         otherUserName: request.userName,
@@ -197,7 +196,7 @@ export default function RequestsScreen() {
     }
 
     try {
-      await createRequestMutation.mutateAsync({
+      await addRequest({
         userId: userProfile!.id,
         userName: `${userProfile?.firstName} ${userProfile?.lastName}`,
         fromCountry,
@@ -208,8 +207,6 @@ export default function RequestsScreen() {
         description: description || '',
         contactInfo,
       });
-
-      await requestsQuery.refetch();
       
       setModalVisible(false);
       setFromCountry('');
@@ -324,7 +321,7 @@ export default function RequestsScreen() {
           </Text>
         </View>
 
-        {requestsQuery.isLoading ? (
+        {isLoading ? (
           <View style={styles.loadingContainer}>
             <Text style={styles.loadingText}>Chargement...</Text>
           </View>

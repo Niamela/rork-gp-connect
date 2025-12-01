@@ -112,12 +112,6 @@ export default function ProfileScreen() {
       onPress: () => router.push('/notifications'),
     },
     {
-      icon: Package,
-      title: 'Mes envois',
-      subtitle: 'Suivre l\'historique de vos colis',
-      onPress: () => router.push('/my-shipments'),
-    },
-    {
       icon: Settings,
       title: 'Paramètres',
       subtitle: 'Préférences de l\'application et confidentialité',

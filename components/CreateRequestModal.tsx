@@ -12,7 +12,7 @@ import {
 import { X, MapPin, Package, Calendar, MessageCircle, Box } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
-import { trpc } from '@/lib/trpc';
+import { useRequests } from '@/contexts/RequestsContext';
 
 interface CreateRequestModalProps {
   visible: boolean;
@@ -22,9 +22,7 @@ interface CreateRequestModalProps {
 export default function CreateRequestModal({ visible, onClose }: CreateRequestModalProps) {
   const insets = useSafeAreaInsets();
   const { userProfile } = useUser();
-  
-  const requestsQuery = trpc.requests.getAll.useQuery();
-  const createRequestMutation = trpc.requests.create.useMutation();
+  const { addRequest } = useRequests();
   
   const [fromCountry, setFromCountry] = useState('');
   const [toCountry, setToCountry] = useState('');
@@ -46,7 +44,7 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
     }
 
     try {
-      await createRequestMutation.mutateAsync({
+      await addRequest({
         userId: userProfile.id,
         userName: `${userProfile.firstName} ${userProfile.lastName}`,
         fromCountry,
@@ -57,8 +55,6 @@ export default function CreateRequestModal({ visible, onClose }: CreateRequestMo
         description: description || '',
         contactInfo,
       });
-
-      await requestsQuery.refetch();
       
       setFromCountry('');
       setToCountry('');

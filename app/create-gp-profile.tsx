@@ -12,27 +12,24 @@ import {
 import { useRouter } from 'expo-router';
 import { User, Phone, MapPin, CheckCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { trpc } from '@/lib/trpc';
 import { useUser } from '@/contexts/UserContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function CreateGPProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { saveUserProfile } = useUser();
+  const { createProfile, subscribeAsGp } = useUser();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     country: '',
     contact: '',
+    password: '',
   });
 
-  const createProfileMutation = trpc.users.createProfile.useMutation();
-  const subscribeGpMutation = trpc.users.subscribeGp.useMutation();
-
   const handleSubmit = async () => {
-    if (!formData.firstName || !formData.lastName || !formData.country || !formData.contact) {
+    if (!formData.firstName || !formData.lastName || !formData.country || !formData.contact || !formData.password) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
       return;
     }
@@ -41,23 +38,18 @@ export default function CreateGPProfileScreen() {
     try {
       console.log('[CreateGPProfile] Creating profile with data:', formData);
       
-      const profile = await createProfileMutation.mutateAsync({
+      await createProfile({
         firstName: formData.firstName,
         lastName: formData.lastName,
         country: formData.country,
         contact: formData.contact,
-        isGP: true,
+        password: formData.password,
+        isGP: false,
       });
 
-      console.log('[CreateGPProfile] Profile created:', profile);
-
       console.log('[CreateGPProfile] Subscribing to GP...');
-      const updatedProfile = await subscribeGpMutation.mutateAsync({ userId: profile.id });
+      await subscribeAsGp();
       console.log('[CreateGPProfile] GP subscription successful');
-
-      if (updatedProfile) {
-        await saveUserProfile(updatedProfile);
-      }
 
       Alert.alert(
         'Succès',
@@ -159,6 +151,21 @@ export default function CreateGPProfileScreen() {
                 value={formData.contact}
                 onChangeText={(text) => setFormData({ ...formData, contact: text })}
                 keyboardType="phone-pad"
+                placeholderTextColor="#999"
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Mot de passe *</Text>
+            <View style={styles.inputContainer}>
+              <Phone size={20} color="#6C757D" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Mot de passe (min. 6 caractères)"
+                value={formData.password}
+                onChangeText={(text) => setFormData({ ...formData, password: text })}
+                secureTextEntry
                 placeholderTextColor="#999"
               />
             </View>

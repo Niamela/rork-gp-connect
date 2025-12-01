@@ -15,14 +15,13 @@ import { LogIn, UserPlus, Phone, MapPin, User as UserIcon, Lock } from 'lucide-r
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
-import { trpc } from '@/lib/trpc';
 
 type AuthMode = 'login' | 'signup';
 
 export default function AuthScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { saveUserProfile } = useUser();
+  const { saveUserProfile, loginUser, createProfile } = useUser();
   const [mode, setMode] = useState<AuthMode>('login');
   const [contact, setContact] = useState('');
   const [password, setPassword] = useState('');
@@ -30,13 +29,6 @@ export default function AuthScreen() {
   const [lastName, setLastName] = useState('');
   const [country, setCountry] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const loginQuery = trpc.users.login.useQuery(
-    { contact, password },
-    { enabled: false }
-  );
-
-  const createProfileMutation = trpc.users.createProfile.useMutation();
 
   const handleLogin = async () => {
     console.log('[Auth] Login attempt with contact:', contact);
@@ -48,24 +40,12 @@ export default function AuthScreen() {
 
     setLoading(true);
     try {
-      const result = await loginQuery.refetch();
-      console.log('[Auth] Profile query result:', result);
+      const profile = await loginUser(contact, password);
+      console.log('[Auth] Login successful:', profile);
       
-      if (result.data) {
-        await saveUserProfile(result.data);
-        Alert.alert('Connexion réussie', 'Bienvenue !', [
-          { text: 'OK', onPress: () => router.replace('/(tabs)') }
-        ]);
-      } else {
-        Alert.alert(
-          'Compte introuvable',
-          'Aucun compte trouvé avec ces informations. Voulez-vous créer un compte ?',
-          [
-            { text: 'Annuler', style: 'cancel' },
-            { text: 'Créer un compte', onPress: () => setMode('signup') }
-          ]
-        );
-      }
+      Alert.alert('Connexion réussie', 'Bienvenue !', [
+        { text: 'OK', onPress: () => router.replace('/(tabs)') }
+      ]);
     } catch (error) {
       console.error('[Auth] Login error:', error);
       Alert.alert(
@@ -96,7 +76,7 @@ export default function AuthScreen() {
 
     setLoading(true);
     try {
-      const newProfile = await createProfileMutation.mutateAsync({
+      const newProfile = await createProfile({
         firstName,
         lastName,
         country,
@@ -106,7 +86,6 @@ export default function AuthScreen() {
       });
       
       console.log('[Auth] Profile created:', newProfile);
-      await saveUserProfile(newProfile);
       
       Alert.alert(
         'Compte créé',
