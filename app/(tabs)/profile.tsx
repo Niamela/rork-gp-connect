@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   Alert,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { 
@@ -29,7 +30,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
 import { useTravels } from '@/contexts/TravelsContext';
-import type { TravelAnnouncement } from '@/contexts/UserContext';
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -152,11 +152,15 @@ export default function ProfileScreen() {
       >
         <View style={styles.profileInfo}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>
-              {hasProfile && userProfile
-                ? `${userProfile.firstName[0]}${userProfile.lastName[0]}`
-                : 'GP'}
-            </Text>
+            {hasProfile && userProfile?.profileImageUri ? (
+              <Image source={{ uri: userProfile.profileImageUri }} style={styles.avatarImage} />
+            ) : (
+              <Text style={styles.avatarText}>
+                {hasProfile && userProfile
+                  ? `${userProfile.firstName[0]}${userProfile.lastName[0]}`
+                  : 'GP'}
+              </Text>
+            )}
           </View>
           <Text style={styles.userName}>
             {hasProfile && userProfile
@@ -438,6 +442,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 3,
     borderColor: 'rgba(255, 255, 255, 0.3)',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
   },
   avatarText: {
     color: 'white',

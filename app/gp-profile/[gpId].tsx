@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -104,9 +105,13 @@ export default function GPProfileScreen() {
 
           <View style={styles.profileInfo}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {gpProfile.firstName[0]}{gpProfile.lastName[0]}
-              </Text>
+              {gpProfile.profileImageUri ? (
+                <Image source={{ uri: gpProfile.profileImageUri }} style={styles.avatarImage} />
+              ) : (
+                <Text style={styles.avatarText}>
+                  {gpProfile.firstName[0]}{gpProfile.lastName[0]}
+                </Text>
+              )}
             </View>
             <Text style={styles.userName}>
               {gpProfile.firstName} {gpProfile.lastName}
@@ -259,6 +264,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 3,
     borderColor: 'rgba(255, 255, 255, 0.3)',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
   },
   avatarText: {
     color: 'white',

@@ -25,6 +25,7 @@ export interface UserProfile {
   isVerified: boolean;
   createdAt: string;
   isGP: boolean;
+  profileImageUri?: string;
   gpSubscription?: {
     isActive: boolean;
     startDate: string;
@@ -41,6 +42,7 @@ export interface CreateProfileInput {
   contact: string;
   password: string;
   isGP?: boolean;
+  profileImageUri?: string;
   gpSubscription?: {
     isActive: boolean;
     startDate: string;
