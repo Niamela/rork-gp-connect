@@ -276,7 +276,311 @@ const translations: Translations = {
     fr: 'Profil non trouvé',
     en: 'Profile not found',
   },
-};
+  'browse.searchPlaceholder': {
+    fr: 'Rechercher des GPs ou des itinéraires...',
+    en: 'Search for GPs or routes...',
+  },
+  'browse.resultsCount': {
+    fr: 'voyage{s} trouvé{s}',
+    en: 'trip{s} found',
+  },
+  'browse.reset': {
+    fr: 'Réinitialiser',
+    en: 'Reset',
+  },
+  'browse.loading': {
+    fr: 'Chargement...',
+    en: 'Loading...',
+  },
+  'browse.noTrips': {
+    fr: 'Aucun voyage disponible pour le moment',
+    en: 'No trips available at the moment',
+  },
+  'browse.verified': {
+    fr: 'Vérifié',
+    en: 'Verified',
+  },
+  'browse.grandPassenger': {
+    fr: 'Grand Passager',
+    en: 'Grand Passenger',
+  },
+  'browse.departure': {
+    fr: 'Départ',
+    en: 'Departure',
+  },
+  'browse.max': {
+    fr: 'Max',
+    en: 'Max',
+  },
+  'browse.availableSpace': {
+    fr: 'Espace disponible',
+    en: 'Available space',
+  },
+  'browse.contact': {
+    fr: 'Contacter',
+    en: 'Contact',
+  },
+  'browse.filterTitle': {
+    fr: 'Filtres de recherche',
+    en: 'Search filters',
+  },
+  'browse.fromCountry': {
+    fr: 'Pays de départ',
+    en: 'Departure country',
+  },
+  'browse.toCountry': {
+    fr: 'Pays d\'arrivée',
+    en: 'Arrival country',
+  },
+  'browse.minWeight': {
+    fr: 'Poids minimum disponible (kg)',
+    en: 'Minimum available weight (kg)',
+  },
+  'browse.departureDate': {
+    fr: 'Date de départ',
+    en: 'Departure date',
+  },
+  'browse.maxPrice': {
+    fr: 'Prix maximum (F/kg)',
+    en: 'Maximum price (F/kg)',
+  },
+  'browse.clearFilters': {
+    fr: 'Réinitialiser',
+    en: 'Reset',
+  },
+  'browse.applyFilters': {
+    fr: 'Appliquer',
+    en: 'Apply',
+  },
+  'messages.title': {
+    fr: 'Messages',
+    en: 'Messages',
+  },
+  'messages.subtitle': {
+    fr: 'Vos conversations avec les GPs et particuliers',
+    en: 'Your conversations with GPs and individuals',
+  },
+  'messages.noMessages': {
+    fr: 'Aucun message',
+    en: 'No messages',
+  },
+  'messages.noMessagesDesc': {
+    fr: 'Vos conversations apparaîtront ici une fois que vous aurez contacté un GP ou un particulier',
+    en: 'Your conversations will appear here once you have contacted a GP or individual',
+  },
+  'messages.individual': {
+    fr: 'Particulier',
+    en: 'Individual',
+  },
+  'messages.loginRequired': {
+    fr: 'Connectez-vous pour accéder à vos messages',
+    en: 'Log in to access your messages',
+  },
+  'messages.createProfile': {
+    fr: 'Créer un profil',
+    en: 'Create profile',
+  },
+  'messages.writeMessage': {
+    fr: 'Écrivez votre message...',
+    en: 'Write your message...',
+  },
+  'messages.yesterday': {
+    fr: 'Hier',
+    en: 'Yesterday',
+  },
+  'requests.title': {
+    fr: 'Demandes de GP',
+    en: 'GP Requests',
+  },
+  'requests.subtitle': {
+    fr: 'Publiez votre demande et les GPs vous contacteront',
+    en: 'Post your request and GPs will contact you',
+  },
+  'requests.search': {
+    fr: 'Rechercher...',
+    en: 'Search...',
+  },
+  'requests.activeFilters': {
+    fr: 'Filtres actifs:',
+    en: 'Active filters:',
+  },
+  'requests.clear': {
+    fr: 'Effacer',
+    en: 'Clear',
+  },
+  'requests.howItWorks': {
+    fr: 'Comment ça marche ?',
+    en: 'How it works?',
+  },
+  'requests.step1': {
+    fr: '1. Publiez votre demande avec les détails de votre envoi',
+    en: '1. Post your request with your shipment details',
+  },
+  'requests.step2': {
+    fr: '2. Les GPs disponibles verront votre annonce',
+    en: '2. Available GPs will see your listing',
+  },
+  'requests.step3': {
+    fr: '3. Ils vous contacteront directement pour discuter',
+    en: '3. They will contact you directly to discuss',
+  },
+  'requests.recentRequests': {
+    fr: 'Demandes récentes',
+    en: 'Recent requests',
+  },
+  'requests.resultsFound': {
+    fr: 'résultat{s} trouvé{s}',
+    en: 'result{s} found',
+  },
+  'requests.noResults': {
+    fr: 'Aucune demande ne correspond à vos critères',
+    en: 'No requests match your criteria',
+  },
+  'requests.noRequests': {
+    fr: 'Aucune demande pour le moment',
+    en: 'No requests at the moment',
+  },
+  'requests.contact': {
+    fr: 'Contacter',
+    en: 'Contact',
+  },
+  'requests.delete': {
+    fr: 'Supprimer',
+    en: 'Delete',
+  },
+  'requests.publishRequest': {
+    fr: 'Publier une demande',
+    en: 'Post a request',
+  },
+  'requests.from': {
+    fr: 'De (Pays)',
+    en: 'From (Country)',
+  },
+  'requests.to': {
+    fr: 'Vers (Pays)',
+    en: 'To (Country)',
+  },
+  'requests.weight': {
+    fr: 'Poids approximatif (kg)',
+    en: 'Approximate weight (kg)',
+  },
+  'requests.date': {
+    fr: 'Date souhaitée',
+    en: 'Desired date',
+  },
+  'requests.productType': {
+    fr: 'Type de produit',
+    en: 'Product type',
+  },
+  'requests.description': {
+    fr: 'Description (optionnel)',
+    en: 'Description (optional)',
+  },
+  'requests.contactInfo': {
+    fr: 'Contact (Téléphone ou Email)',
+    en: 'Contact (Phone or Email)',
+  },
+  'requests.publish': {
+    fr: 'Publier la demande',
+    en: 'Publish request',
+  },
+  'requests.filterTitle': {
+    fr: 'Filtrer les demandes',
+    en: 'Filter requests',
+  },
+  'requests.filterInfo': {
+    fr: 'Utilisez les filtres ci-dessous pour trouver les demandes qui correspondent à vos voyages prévus.',
+    en: 'Use the filters below to find requests that match your planned trips.',
+  },
+  'requests.applyFilters': {
+    fr: 'Appliquer',
+    en: 'Apply',
+  },
+  'settings.title': {
+    fr: 'Paramètres',
+    en: 'Settings',
+  },
+  'settings.appearance': {
+    fr: 'Apparence',
+    en: 'Appearance',
+  },
+  'settings.darkMode': {
+    fr: 'Mode sombre',
+    en: 'Dark mode',
+  },
+  'settings.darkModeDesc': {
+    fr: 'Activer le thème sombre',
+    en: 'Enable dark theme',
+  },
+  'settings.language': {
+    fr: 'Langue',
+    en: 'Language',
+  },
+  'settings.languageFr': {
+    fr: 'Français',
+    en: 'French',
+  },
+  'settings.languageEn': {
+    fr: 'Anglais',
+    en: 'English',
+  },
+  'settings.dataStorage': {
+    fr: 'Données et stockage',
+    en: 'Data and storage',
+  },
+  'settings.autoDownload': {
+    fr: 'Téléchargement automatique',
+    en: 'Auto-download',
+  },
+  'settings.autoDownloadDesc': {
+    fr: 'Télécharger automatiquement les images',
+    en: 'Automatically download images',
+  },
+  'settings.clearCache': {
+    fr: 'Vider le cache',
+    en: 'Clear cache',
+  },
+  'settings.clearCacheDesc': {
+    fr: 'Libérer de l\'espace de stockage',
+    en: 'Free up storage space',
+  },
+  'settings.privacySecurity': {
+    fr: 'Confidentialité et sécurité',
+    en: 'Privacy and security',
+  },
+  'settings.privacyPolicy': {
+    fr: 'Politique de confidentialité',
+    en: 'Privacy Policy',
+  },
+  'settings.privacyPolicyDesc': {
+    fr: 'Voir notre politique de confidentialité',
+    en: 'View our privacy policy',
+  },
+  'settings.accountSecurity': {
+    fr: 'Sécurité du compte',
+    en: 'Account security',
+  },
+  'settings.accountSecurityDesc': {
+    fr: 'Gérer la sécurité de votre compte',
+    en: 'Manage your account security',
+  },
+  'settings.dangerZone': {
+    fr: 'Zone dangereuse',
+    en: 'Danger zone',
+  },
+  'settings.deleteAccount': {
+    fr: 'Supprimer le compte',
+    en: 'Delete account',
+  },
+  'settings.deleteAccountDesc': {
+    fr: 'Supprimer définitivement votre compte',
+    en: 'Permanently delete your account',
+  },
+  'settings.deleteAccountWarning': {
+    fr: '⚠️ La suppression de votre compte est irréversible. Toutes vos données seront définitivement supprimées.',
+    en: '⚠️ Deleting your account is irreversible. All your data will be permanently deleted.',
+  },
+}
 
 const LANGUAGE_STORAGE_KEY = '@gp_connect_language';
 

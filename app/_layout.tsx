@@ -8,6 +8,7 @@ import { TravelsProvider } from "@/contexts/TravelsContext";
 import { RequestsProvider } from "@/contexts/RequestsContext";
 import { MessagesProvider } from "@/contexts/MessagesContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -71,17 +72,19 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <LanguageProvider>
-          <UserProvider>
-            <TravelsProvider>
-              <RequestsProvider>
-                <MessagesProvider>
-                  <RootLayoutNav />
-                </MessagesProvider>
-              </RequestsProvider>
-            </TravelsProvider>
-          </UserProvider>
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <UserProvider>
+              <TravelsProvider>
+                <RequestsProvider>
+                  <MessagesProvider>
+                    <RootLayoutNav />
+                  </MessagesProvider>
+                </RequestsProvider>
+              </TravelsProvider>
+            </UserProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </GestureHandlerRootView>
     </QueryClientProvider>
   );
