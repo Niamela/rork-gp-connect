@@ -200,10 +200,14 @@ export const [UserProvider, useUser] = createContextHook(() => {
     };
     
     await saveUserProfile(updated);
+    return newAnnouncement;
   }, [userProfile, saveUserProfile]);
 
   const updateTravelAnnouncement = useCallback(async (id: string, updates: Partial<Omit<TravelAnnouncement, 'id' | 'createdAt'>>) => {
     if (!userProfile || !userProfile.gpTravelAnnouncements) return;
+    
+    const updatedAnnouncement = userProfile.gpTravelAnnouncements.find(a => a.id === id);
+    if (!updatedAnnouncement) return;
     
     const updated = {
       ...userProfile,
@@ -215,6 +219,7 @@ export const [UserProvider, useUser] = createContextHook(() => {
     };
     
     await saveUserProfile(updated);
+    return { ...updatedAnnouncement, ...updates, updatedAt: new Date().toISOString() };
   }, [userProfile, saveUserProfile]);
 
   const deleteTravelAnnouncement = useCallback(async (id: string) => {

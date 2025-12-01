@@ -1,9 +1,10 @@
 import createContextHook from '@nkzw/create-context-hook';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TravelAnnouncement } from './UserContext';
+import { TravelAnnouncement, UserProfile } from './UserContext';
 
 const TRAVELS_STORAGE_KEY = '@gp_connect_travels';
+const USER_STORAGE_KEY = '@gp_connect_user_profile';
 
 export const [TravelsProvider, useTravels] = createContextHook(() => {
   const [travels, setTravels] = useState<TravelAnnouncement[]>([]);
@@ -14,11 +15,35 @@ export const [TravelsProvider, useTravels] = createContextHook(() => {
     setIsLoading(true);
     try {
       const stored = await AsyncStorage.getItem(TRAVELS_STORAGE_KEY);
+      const userStored = await AsyncStorage.getItem(USER_STORAGE_KEY);
+      
+      let allTravels: TravelAnnouncement[] = [];
+      
       if (stored) {
-        const parsedTravels = JSON.parse(stored);
-        console.log('[TravelsContext] Travels loaded:', parsedTravels);
-        setTravels(parsedTravels);
+        allTravels = JSON.parse(stored);
       }
+      
+      if (userStored) {
+        try {
+          const userProfile: UserProfile = JSON.parse(userStored);
+          if (userProfile.gpTravelAnnouncements && userProfile.gpTravelAnnouncements.length > 0) {
+            const userTravels = userProfile.gpTravelAnnouncements;
+            const existingIds = new Set(allTravels.map(t => t.id));
+            const newTravels = userTravels.filter(t => !existingIds.has(t.id));
+            allTravels = [...allTravels, ...newTravels];
+            
+            if (newTravels.length > 0) {
+              await AsyncStorage.setItem(TRAVELS_STORAGE_KEY, JSON.stringify(allTravels));
+              console.log('[TravelsContext] Synced user travels to global travels');
+            }
+          }
+        } catch (parseError) {
+          console.error('[TravelsContext] Error parsing user profile:', parseError);
+        }
+      }
+      
+      console.log('[TravelsContext] Travels loaded:', allTravels);
+      setTravels(allTravels);
     } catch (error) {
       console.error('[TravelsContext] Error loading travels:', error);
     } finally {
@@ -41,10 +66,10 @@ export const [TravelsProvider, useTravels] = createContextHook(() => {
     }
   }, []);
 
-  const addTravel = useCallback(async (travel: Omit<TravelAnnouncement, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const addTravel = useCallback(async (travel: Omit<TravelAnnouncement, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }) => {
     const newTravel: TravelAnnouncement = {
       ...travel,
-      id: Date.now().toString(),
+      id: travel.id || Date.now().toString(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

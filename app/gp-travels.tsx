@@ -24,11 +24,13 @@ import {
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
+import { useTravels } from '@/contexts/TravelsContext';
 
 export default function GPTravelsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { userProfile, addTravelAnnouncement, updateTravelAnnouncement, deleteTravelAnnouncement } = useUser();
+  const { addTravel, updateTravel, deleteTravel } = useTravels();
   
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -92,13 +94,23 @@ export default function GPTravelsScreen() {
 
     try {
       if (editingId) {
-        await updateTravelAnnouncement(editingId, formData);
+        const updated = await updateTravelAnnouncement(editingId, formData);
+        if (updated) {
+          await updateTravel(editingId, { ...formData, gpId: userProfile.id });
+        }
         Alert.alert('Succès', 'Annonce de voyage mise à jour avec succès.');
       } else {
-        await addTravelAnnouncement({
+        const newAnnouncement = await addTravelAnnouncement({
           gpId: userProfile.id,
           ...formData,
         });
+        if (newAnnouncement) {
+          await addTravel({
+            id: newAnnouncement.id,
+            gpId: userProfile.id,
+            ...formData,
+          });
+        }
         Alert.alert('Succès', 'Annonce de voyage ajoutée avec succès.');
       }
       handleCloseModal();
@@ -120,6 +132,7 @@ export default function GPTravelsScreen() {
           onPress: async () => {
             try {
               await deleteTravelAnnouncement(id);
+              await deleteTravel(id);
               Alert.alert('Succès', 'Annonce de voyage supprimée avec succès.');
             } catch (error: any) {
               console.error('Error deleting travel announcement:', error);
