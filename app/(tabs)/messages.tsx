@@ -16,7 +16,6 @@ import { useUser } from '@/contexts/UserContext';
 import { useMessages } from '@/contexts/MessagesContext';
 import type { Conversation, Message } from '@/contexts/MessagesContext';
 import { useRouter } from 'expo-router';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 
 
@@ -24,7 +23,6 @@ export default function MessagesScreen() {
   const insets = useSafeAreaInsets();
   const { userProfile } = useUser();
   const router = useRouter();
-  const { t } = useLanguage();
   
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messageInput, setMessageInput] = useState('');
@@ -75,7 +73,7 @@ export default function MessagesScreen() {
     if (diffInHours < 24) {
       return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
     } else if (diffInHours < 48) {
-      return t('messages.yesterday');
+      return 'Hier';
     } else {
       return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
     }
@@ -85,15 +83,15 @@ export default function MessagesScreen() {
     return (
       <View style={[styles.container, styles.emptyState]}>
         <MessageCircle size={64} color="#CCC" />
-        <Text style={styles.emptyTitle}>{t('messages.title')}</Text>
+        <Text style={styles.emptyTitle}>Messagerie</Text>
         <Text style={styles.emptyText}>
-          {t('messages.loginRequired')}
+          Connectez-vous pour accéder à vos messages
         </Text>
         <TouchableOpacity
           style={styles.loginButton}
           onPress={() => router.push('/create-gp-profile')}
         >
-          <Text style={styles.loginButtonText}>{t('messages.createProfile')}</Text>
+          <Text style={styles.loginButtonText}>Créer un profil</Text>
         </TouchableOpacity>
       </View>
     );
@@ -121,7 +119,7 @@ export default function MessagesScreen() {
           <View style={styles.chatHeaderInfo}>
             <Text style={styles.chatHeaderName}>{otherParticipant?.userName || 'Utilisateur'}</Text>
             <Text style={styles.chatHeaderStatus}>
-              {otherParticipant?.isGP ? t('browse.grandPassenger') : t('messages.individual')}
+              {otherParticipant?.isGP ? 'Grand Passager' : 'Particulier'}
             </Text>
           </View>
         </View>
@@ -152,7 +150,7 @@ export default function MessagesScreen() {
         <View style={[styles.messageInputContainer, { paddingBottom: insets.bottom + 8 }]}>
           <TextInput
             style={styles.messageInput}
-            placeholder={t('messages.writeMessage')}
+            placeholder="Écrivez votre message..."
             value={messageInput}
             onChangeText={setMessageInput}
             multiline
@@ -177,22 +175,22 @@ export default function MessagesScreen() {
   return (
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <Text style={styles.headerTitle}>{t('messages.title')}</Text>
+        <Text style={styles.headerTitle}>Messages</Text>
         <Text style={styles.headerSubtitle}>
-          {t('messages.subtitle')}
+          Vos conversations avec les GPs et particuliers
         </Text>
       </View>
 
       {isLoading ? (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyText}>{t('common.loading')}</Text>
+          <Text style={styles.emptyText}>Chargement...</Text>
         </View>
       ) : conversations.length === 0 ? (
         <View style={styles.emptyState}>
           <MessageCircle size={64} color="#CCC" />
-          <Text style={styles.emptyTitle}>{t('messages.noMessages')}</Text>
+          <Text style={styles.emptyTitle}>Aucun message</Text>
           <Text style={styles.emptyText}>
-            {t('messages.noMessagesDesc')}
+            Vos conversations apparaîtront ici une fois que vous aurez contacté un GP ou un particulier
           </Text>
         </View>
       ) : (
@@ -220,7 +218,7 @@ export default function MessagesScreen() {
                     )}
                   </View>
                   <Text style={styles.conversationType}>
-                    {otherParticipant?.isGP ? t('browse.grandPassenger') : t('messages.individual')}
+                    {otherParticipant?.isGP ? 'Grand Passager' : 'Particulier'}
                   </Text>
                   {conversation.lastMessage && (
                     <Text style={styles.lastMessage} numberOfLines={1}>

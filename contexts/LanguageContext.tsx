@@ -580,42 +580,6 @@ const translations: Translations = {
     fr: '⚠️ La suppression de votre compte est irréversible. Toutes vos données seront définitivement supprimées.',
     en: '⚠️ Deleting your account is irreversible. All your data will be permanently deleted.',
   },
-  'common.verified': {
-    fr: 'Vérifié',
-    en: 'Verified',
-  },
-  'common.loading': {
-    fr: 'Chargement...',
-    en: 'Loading...',
-  },
-  'common.cancel': {
-    fr: 'Annuler',
-    en: 'Cancel',
-  },
-  'common.delete': {
-    fr: 'Supprimer',
-    en: 'Delete',
-  },
-  'common.success': {
-    fr: 'Succès',
-    en: 'Success',
-  },
-  'common.error': {
-    fr: 'Erreur',
-    en: 'Error',
-  },
-  'common.ok': {
-    fr: 'OK',
-    en: 'OK',
-  },
-  'common.apply': {
-    fr: 'Appliquer',
-    en: 'Apply',
-  },
-  'common.reset': {
-    fr: 'Réinitialiser',
-    en: 'Reset',
-  },
 }
 
 const LANGUAGE_STORAGE_KEY = '@gp_connect_language';

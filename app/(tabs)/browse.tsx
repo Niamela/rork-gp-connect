@@ -17,7 +17,6 @@ import { useUser } from '@/contexts/UserContext';
 import { useMessages } from '@/contexts/MessagesContext';
 import { useRouter } from 'expo-router';
 import type { TravelAnnouncement } from '@/contexts/UserContext';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function BrowseScreen() {
   const insets = useSafeAreaInsets();
@@ -26,7 +25,6 @@ export default function BrowseScreen() {
   const { getTravelsWithGPInfo, isLoading } = useTravels();
   const { createConversation } = useMessages();
   const travelsWithInfo = getTravelsWithGPInfo();
-  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filterFrom, setFilterFrom] = useState('');
@@ -38,11 +36,11 @@ export default function BrowseScreen() {
   const handleContactGP = async (travel: TravelAnnouncement, gpName: string) => {
     if (!userProfile) {
       Alert.alert(
-        t('messages.loginRequired'),
-        t('messages.noMessagesDesc'),
+        'Connexion requise',
+        'Vous devez créer un profil pour contacter un GP.',
         [
-          { text: t('common.cancel'), style: 'cancel' },
-          { text: t('messages.createProfile'), onPress: () => router.push('/create-gp-profile') }
+          { text: 'Annuler', style: 'cancel' },
+          { text: 'Créer un profil', onPress: () => router.push('/create-gp-profile') }
         ]
       );
       return;
@@ -60,7 +58,7 @@ export default function BrowseScreen() {
       router.push('/messages');
     } catch (error) {
       console.error('Error creating conversation:', error);
-      Alert.alert(t('common.error'), 'Impossible de créer la conversation');
+      Alert.alert('Erreur', 'Impossible de créer la conversation');
     }
   };
 
@@ -99,7 +97,7 @@ export default function BrowseScreen() {
           <Search size={20} color="#6C757D" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder={t('browse.searchPlaceholder')}
+            placeholder="Rechercher des GPs ou des itinéraires..."
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholderTextColor="#999"
@@ -116,22 +114,22 @@ export default function BrowseScreen() {
       <ScrollView style={styles.resultsContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.resultsHeader}>
           <Text style={styles.resultsCount}>
-            {filteredTravels.length} {t('browse.resultsCount', { s: filteredTravels.length !== 1 ? 's' : '' })}
+            {filteredTravels.length} voyage{filteredTravels.length !== 1 ? 's' : ''} trouvé{filteredTravels.length !== 1 ? 's' : ''}
           </Text>
           {hasActiveFilters && (
             <TouchableOpacity onPress={clearFilters} style={styles.clearFiltersButton}>
-              <Text style={styles.clearFiltersText}>{t('browse.reset')}</Text>
+              <Text style={styles.clearFiltersText}>Réinitialiser</Text>
             </TouchableOpacity>
           )}
         </View>
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>{t('browse.loading')}</Text>
+            <Text style={styles.loadingText}>Chargement...</Text>
           </View>
         ) : filteredTravels.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>{t('browse.noTrips')}</Text>
+            <Text style={styles.emptyText}>Aucun voyage disponible pour le moment</Text>
           </View>
         ) : (
           filteredTravels.map((travel) => {
@@ -167,7 +165,7 @@ export default function BrowseScreen() {
                     </View>
                     <View style={styles.gpType}>
                       <View style={[styles.typeTag, { backgroundColor: '#28A745' }]}>
-                        <Text style={styles.typeText}>{t('browse.grandPassenger')}</Text>
+                        <Text style={styles.typeText}>Grand Passager</Text>
                       </View>
                     </View>
                   </View>
@@ -184,15 +182,15 @@ export default function BrowseScreen() {
                   <View style={styles.gpMeta}>
                     <View style={styles.metaItem}>
                       <Clock size={12} color="#6C757D" />
-                      <Text style={styles.metaText}>{t('browse.departure')}: {travel.departureDate}</Text>
+                      <Text style={styles.metaText}>Départ: {travel.departureDate}</Text>
                     </View>
                     <View style={styles.metaItem}>
                       <Package size={12} color="#6C757D" />
-                      <Text style={styles.metaText}>{t('browse.max')}: {travel.maxWeight}kg</Text>
+                      <Text style={styles.metaText}>Max: {travel.maxWeight}kg</Text>
                     </View>
                   </View>
                   <View style={styles.availableSpace}>
-                    <Text style={styles.availableSpaceText}>{t('browse.availableSpace')}: {travel.availableSpace}</Text>
+                    <Text style={styles.availableSpaceText}>Espace disponible: {travel.availableSpace}</Text>
                   </View>
                 </View>
 
@@ -204,7 +202,7 @@ export default function BrowseScreen() {
                   }}
                 >
                   <MessageCircle size={16} color="white" />
-                  <Text style={styles.contactButtonText}>{t('browse.contact')}</Text>
+                  <Text style={styles.contactButtonText}>Contacter</Text>
                 </TouchableOpacity>
               </TouchableOpacity>
             );
@@ -221,7 +219,7 @@ export default function BrowseScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{t('browse.filterTitle')}</Text>
+              <Text style={styles.modalTitle}>Filtres de recherche</Text>
               <TouchableOpacity onPress={() => setShowFilterModal(false)}>
                 <X size={24} color="#2C3E50" />
               </TouchableOpacity>
@@ -229,7 +227,7 @@ export default function BrowseScreen() {
 
             <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
               <View style={styles.filterGroup}>
-                <Text style={styles.filterLabel}>{t('browse.fromCountry')}</Text>
+                <Text style={styles.filterLabel}>Pays de départ</Text>
                 <View style={styles.filterInputContainer}>
                   <MapPin size={18} color="#FF6B35" />
                   <TextInput
@@ -243,7 +241,7 @@ export default function BrowseScreen() {
               </View>
 
               <View style={styles.filterGroup}>
-                <Text style={styles.filterLabel}>{t('browse.toCountry')}</Text>
+                <Text style={styles.filterLabel}>Pays d&apos;arrivée</Text>
                 <View style={styles.filterInputContainer}>
                   <MapPin size={18} color="#FF6B35" />
                   <TextInput
@@ -257,7 +255,7 @@ export default function BrowseScreen() {
               </View>
 
               <View style={styles.filterGroup}>
-                <Text style={styles.filterLabel}>{t('browse.minWeight')}</Text>
+                <Text style={styles.filterLabel}>Poids minimum disponible (kg)</Text>
                 <View style={styles.filterInputContainer}>
                   <Package size={18} color="#FF6B35" />
                   <TextInput
@@ -272,7 +270,7 @@ export default function BrowseScreen() {
               </View>
 
               <View style={styles.filterGroup}>
-                <Text style={styles.filterLabel}>{t('browse.departureDate')}</Text>
+                <Text style={styles.filterLabel}>Date de départ</Text>
                 <View style={styles.filterInputContainer}>
                   <Clock size={18} color="#FF6B35" />
                   <TextInput
@@ -286,7 +284,7 @@ export default function BrowseScreen() {
               </View>
 
               <View style={styles.filterGroup}>
-                <Text style={styles.filterLabel}>{t('browse.maxPrice')}</Text>
+                <Text style={styles.filterLabel}>Prix maximum (F/kg)</Text>
                 <View style={styles.filterInputContainer}>
                   <Text style={styles.filterCurrencyIcon}>F</Text>
                   <TextInput
@@ -306,7 +304,7 @@ export default function BrowseScreen() {
                 style={styles.clearButton}
                 onPress={clearFilters}
               >
-                <Text style={styles.clearButtonText}>{t('browse.clearFilters')}</Text>
+                <Text style={styles.clearButtonText}>Réinitialiser</Text>
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.applyButton}
@@ -315,7 +313,7 @@ export default function BrowseScreen() {
                   console.log('[Filter] Applied filters:', { filterFrom, filterTo, filterMaxWeight, filterDate, filterMaxPrice });
                 }}
               >
-                <Text style={styles.applyButtonText}>{t('browse.applyFilters')}</Text>
+                <Text style={styles.applyButtonText}>Appliquer</Text>
               </TouchableOpacity>
             </View>
           </View>
