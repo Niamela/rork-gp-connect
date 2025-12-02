@@ -18,48 +18,46 @@ import {
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function BecomeGPScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { t } = useLanguage();
 
   const steps = [
     {
       number: '1',
-      title: t('becomeGP.step1Title'),
-      description: t('becomeGP.step1Desc'),
+      title: 'Créez votre profil GP',
+      description: 'Remplissez vos informations personnelles et professionnelles',
       icon: Users,
     },
     {
       number: '2',
-      title: t('becomeGP.step2Title'),
-      description: t('becomeGP.step2Desc'),
+      title: 'Souscrivez à l\'abonnement',
+      description: 'Abonnement mensuel de 10 000 F pour accéder à toutes les fonctionnalités',
       icon: DollarSign,
     },
     {
       number: '3',
-      title: t('becomeGP.step3Title'),
-      description: t('becomeGP.step3Desc'),
+      title: 'Publiez vos voyages',
+      description: 'Partagez vos dates de voyage et l\'espace disponible',
       icon: Plane,
     },
     {
       number: '4',
-      title: t('becomeGP.step4Title'),
-      description: t('becomeGP.step4Desc'),
+      title: 'Recevez des demandes',
+      description: 'Les particuliers vous contactent pour leurs besoins d\'envoi',
       icon: Package,
     },
   ];
 
   const benefits = [
-    t('becomeGP.benefit1'),
-    t('becomeGP.benefit2'),
-    t('becomeGP.benefit3'),
-    t('becomeGP.benefit4'),
-    t('becomeGP.benefit5'),
-    t('becomeGP.benefit6'),
-    t('becomeGP.benefit7'),
+    'Publiez autant de voyages que vous souhaitez',
+    'Accédez à toutes les demandes des particuliers',
+    'Messagerie directe avec les clients',
+    'Profil vérifié et badge GP',
+    'Visibilité accrue dans les recherches',
+    'Support prioritaire',
+    'Gestion simplifiée de vos annonces',
   ];
 
   const handleGetStarted = () => {
@@ -90,9 +88,9 @@ export default function BecomeGPScreen() {
             <View style={styles.iconContainer}>
               <Plane size={48} color="white" />
             </View>
-            <Text style={styles.headerTitle}>{t('becomeGP.headerTitle')}</Text>
+            <Text style={styles.headerTitle}>Devenir Grand Passager</Text>
             <Text style={styles.headerSubtitle}>
-              {t('becomeGP.headerSubtitle')}
+              Transformez vos voyages en opportunité et aidez les autres à envoyer leurs colis
             </Text>
           </View>
         </LinearGradient>
@@ -100,15 +98,15 @@ export default function BecomeGPScreen() {
         <View style={styles.priceSection}>
           <View style={styles.priceCard}>
             <Text style={styles.priceAmount}>10 000 F</Text>
-            <Text style={styles.pricePeriod}>{t('becomeGP.pricePerMonth')}</Text>
+            <Text style={styles.pricePeriod}>/ mois</Text>
           </View>
           <Text style={styles.priceDescription}>
-            {t('becomeGP.priceDescription')}
+            Sans engagement • Annulez à tout moment
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('becomeGP.howItWorks')}</Text>
+          <Text style={styles.sectionTitle}>Comment ça marche ?</Text>
           
           {steps.map((step, index) => (
             <View key={index} style={styles.stepCard}>
@@ -129,7 +127,7 @@ export default function BecomeGPScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('becomeGP.benefitsIncluded')}</Text>
+          <Text style={styles.sectionTitle}>Avantages inclus</Text>
           
           <View style={styles.benefitsCard}>
             {benefits.map((benefit, index) => (
@@ -143,17 +141,19 @@ export default function BecomeGPScreen() {
 
         <View style={styles.section}>
           <View style={styles.differenceCard}>
-            <Text style={styles.differenceTitle}>{t('becomeGP.differenceTitle')}</Text>
+            <Text style={styles.differenceTitle}>Quelle est la différence ?</Text>
             
             <View style={styles.comparisonSection}>
               <View style={styles.comparisonItem}>
                 <View style={[styles.comparisonBadge, { backgroundColor: '#E3F2FD' }]}>
                   <Text style={[styles.comparisonBadgeText, { color: '#1976D2' }]}>
-                    {t('becomeGP.individualLabel')}
+                    Particulier
                   </Text>
                 </View>
                 <Text style={styles.comparisonDescription}>
-                  {t('becomeGP.individualDesc')}
+                  • Publier des demandes d&apos;envoi gratuitement{'\n'}
+                  • Voir tous les voyages disponibles{'\n'}
+                  • Recevoir des messages des GPs
                 </Text>
               </View>
 
@@ -162,11 +162,14 @@ export default function BecomeGPScreen() {
               <View style={styles.comparisonItem}>
                 <View style={[styles.comparisonBadge, { backgroundColor: '#E8F5E9' }]}>
                   <Text style={[styles.comparisonBadgeText, { color: '#4CAF50' }]}>
-                    {t('becomeGP.gpLabel')}
+                    Grand Passager (GP)
                   </Text>
                 </View>
                 <Text style={styles.comparisonDescription}>
-                  {t('becomeGP.gpDesc')}
+                  • Publier des voyages illimités{'\n'}
+                  • Contacter toutes les demandes{'\n'}
+                  • Badge vérifié et profil visible{'\n'}
+                  • Monétiser vos voyages
                 </Text>
               </View>
             </View>
@@ -180,7 +183,7 @@ export default function BecomeGPScreen() {
           onPress={handleGetStarted}
           activeOpacity={0.8}
         >
-          <Text style={styles.getStartedButtonText}>{t('becomeGP.getStarted')}</Text>
+          <Text style={styles.getStartedButtonText}>Commencer maintenant</Text>
           <ArrowRight size={20} color="white" />
         </TouchableOpacity>
       </View>

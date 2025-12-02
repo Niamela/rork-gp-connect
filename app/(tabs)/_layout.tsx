@@ -5,7 +5,6 @@ import { TouchableOpacity, View, StyleSheet, Alert } from "react-native";
 import { useUser } from "@/contexts/UserContext";
 import CreateRequestModal from "@/components/CreateRequestModal";
 import CreateProfileModal from "@/components/CreateProfileModal";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 function AddButton() {
   const { hasProfile, userProfile } = useUser();
@@ -66,8 +65,6 @@ function AddButton() {
 }
 
 export default function TabLayout() {
-  const { t } = useLanguage();
-
   return (
     <Tabs
       screenOptions={{
@@ -94,14 +91,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: t('tabs.home'),
+          title: "Accueil",
           tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="browse"
         options={{
-          title: t('tabs.browse'),
+          title: "Parcourir",
           tabBarIcon: ({ color, size }) => <Search color={color} size={size} />,
         }}
       />
@@ -121,21 +118,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="requests"
         options={{
-          title: t('tabs.requests'),
+          title: "Annonces",
           tabBarIcon: ({ color, size }) => <MessageSquare color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="messages"
         options={{
-          title: t('tabs.messages'),
+          title: "Messages",
           tabBarIcon: ({ color, size }) => <MessageCircle color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: t('tabs.profile'),
+          title: "Profil",
           tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
         }}
       />
