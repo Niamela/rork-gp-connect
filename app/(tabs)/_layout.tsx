@@ -9,7 +9,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 function AddButton() {
   const { hasProfile, userProfile } = useUser();
-  const { t } = useLanguage();
   const [requestModalVisible, setRequestModalVisible] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
 
@@ -21,11 +20,11 @@ function AddButton() {
     if (!hasProfile) {
       console.log('[AddButton] No profile, showing alert');
       Alert.alert(
-        t('addButton.profileRequired'),
-        t('addButton.profileRequiredMessage'),
+        'Profil requis',
+        'Vous devez créer un profil gratuit pour publier une demande.',
         [
-          { text: t('addButton.cancel'), style: 'cancel' },
-          { text: t('addButton.createProfile'), onPress: () => {
+          { text: 'Annuler', style: 'cancel' },
+          { text: 'Créer un profil', onPress: () => {
             console.log('[AddButton] Opening profile modal');
             setProfileModalVisible(true);
           }}

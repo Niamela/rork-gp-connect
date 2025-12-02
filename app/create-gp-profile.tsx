@@ -16,13 +16,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '@/contexts/UserContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CreateGPProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { createProfile, subscribeAsGp } = useUser();
-  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -39,8 +37,8 @@ export default function CreateGPProfileScreen() {
       
       if (status !== 'granted') {
         Alert.alert(
-          t('createGPProfile.permissionRequired'),
-          t('createGPProfile.permissionMessage')
+          'Permission requise',
+          'Veuillez autoriser l\'accès à la galerie pour sélectionner une photo'
         );
         return;
       }
@@ -57,13 +55,13 @@ export default function CreateGPProfileScreen() {
       }
     } catch (error) {
       console.error('Error picking image:', error);
-      Alert.alert(t('createGPProfile.errorTitle'), t('createGPProfile.imageError'));
+      Alert.alert('Erreur', 'Impossible de sélectionner l\'image');
     }
   };
 
   const handleSubmit = async () => {
     if (!formData.firstName || !formData.lastName || !formData.country || !formData.contact || !formData.password) {
-      Alert.alert(t('createGPProfile.errorTitle'), t('createGPProfile.errorAllFields'));
+      Alert.alert('Erreur', 'Veuillez remplir tous les champs obligatoires');
       return;
     }
 
@@ -86,11 +84,11 @@ export default function CreateGPProfileScreen() {
       console.log('[CreateGPProfile] GP subscription successful');
 
       Alert.alert(
-        t('createGPProfile.successTitle'),
-        t('createGPProfile.successMessage'),
+        'Succès',
+        'Votre profil GP a été créé avec succès! Vous pouvez maintenant publier vos voyages.',
         [
           {
-            text: t('common.ok'),
+            text: 'OK',
             onPress: () => router.replace('/(tabs)/profile'),
           },
         ]
@@ -98,8 +96,8 @@ export default function CreateGPProfileScreen() {
     } catch (error: any) {
       console.error('[CreateGPProfile] Error:', error);
       Alert.alert(
-        t('createGPProfile.errorTitle'),
-        error?.message || t('createGPProfile.errorMessage')
+        'Erreur',
+        error?.message || 'Une erreur est survenue lors de la création du profil'
       );
     } finally {
       setLoading(false);
@@ -113,15 +111,15 @@ export default function CreateGPProfileScreen() {
           colors={['#4CAF50', '#45A049']}
           style={styles.header}
         >
-          <Text style={styles.headerTitle}>{t('createGPProfile.headerTitle')}</Text>
+          <Text style={styles.headerTitle}>Devenir GP</Text>
           <Text style={styles.headerSubtitle}>
-            {t('createGPProfile.headerSubtitle')}
+            Créez votre profil et commencez à publier vos voyages
           </Text>
         </LinearGradient>
 
         <View style={styles.content}>
         <View style={styles.imageSection}>
-          <Text style={styles.sectionTitle}>{t('createGPProfile.profilePhoto')}</Text>
+          <Text style={styles.sectionTitle}>Photo de profil</Text>
           <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
             {profileImageUri ? (
               <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
@@ -134,29 +132,29 @@ export default function CreateGPProfileScreen() {
               <Camera size={20} color="white" />
             </View>
           </TouchableOpacity>
-          <Text style={styles.imageHint}>{t('createGPProfile.photoHint')}</Text>
+          <Text style={styles.imageHint}>Photo qui apparaîtra dans vos annonces</Text>
         </View>
 
         <View style={styles.infoCard}>
           <CheckCircle size={24} color="#4CAF50" />
           <View style={styles.infoTextContainer}>
-            <Text style={styles.infoTitle}>{t('createGPProfile.infoTitle')}</Text>
+            <Text style={styles.infoTitle}>Abonnement mensuel: 10 000 F</Text>
             <Text style={styles.infoText}>
-              {t('createGPProfile.infoText')}
+              Publiez autant de voyages que vous souhaitez et recevez des demandes de particuliers
             </Text>
           </View>
         </View>
 
         <View style={styles.form}>
-          <Text style={styles.sectionTitle}>{t('createGPProfile.personalInfo')}</Text>
+          <Text style={styles.sectionTitle}>Informations personnelles</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>{t('createGPProfile.firstName')} {t('createGPProfile.required')}</Text>
+            <Text style={styles.label}>Prénom *</Text>
             <View style={styles.inputContainer}>
               <User size={20} color="#6C757D" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder={t('createGPProfile.firstNamePlaceholder')}
+                placeholder="Entrez votre prénom"
                 value={formData.firstName}
                 onChangeText={(text) => setFormData({ ...formData, firstName: text })}
                 placeholderTextColor="#999"
@@ -165,12 +163,12 @@ export default function CreateGPProfileScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>{t('createGPProfile.lastName')} {t('createGPProfile.required')}</Text>
+            <Text style={styles.label}>Nom *</Text>
             <View style={styles.inputContainer}>
               <User size={20} color="#6C757D" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder={t('createGPProfile.lastNamePlaceholder')}
+                placeholder="Entrez votre nom"
                 value={formData.lastName}
                 onChangeText={(text) => setFormData({ ...formData, lastName: text })}
                 placeholderTextColor="#999"
@@ -179,12 +177,12 @@ export default function CreateGPProfileScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>{t('createGPProfile.country')} {t('createGPProfile.required')}</Text>
+            <Text style={styles.label}>Pays *</Text>
             <View style={styles.inputContainer}>
               <MapPin size={20} color="#6C757D" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder={t('createGPProfile.countryPlaceholder')}
+                placeholder="Entrez votre pays"
                 value={formData.country}
                 onChangeText={(text) => setFormData({ ...formData, country: text })}
                 placeholderTextColor="#999"
@@ -193,12 +191,12 @@ export default function CreateGPProfileScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>{t('createGPProfile.contact')} {t('createGPProfile.required')}</Text>
+            <Text style={styles.label}>Contact (Téléphone) *</Text>
             <View style={styles.inputContainer}>
               <Phone size={20} color="#6C757D" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder={t('createGPProfile.contactPlaceholder')}
+                placeholder="+225 XX XX XX XX XX"
                 value={formData.contact}
                 onChangeText={(text) => setFormData({ ...formData, contact: text })}
                 keyboardType="phone-pad"
@@ -208,12 +206,12 @@ export default function CreateGPProfileScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>{t('createGPProfile.password')} {t('createGPProfile.required')}</Text>
+            <Text style={styles.label}>Mot de passe *</Text>
             <View style={styles.inputContainer}>
               <Phone size={20} color="#6C757D" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder={t('createGPProfile.passwordPlaceholder')}
+                placeholder="Mot de passe (min. 6 caractères)"
                 value={formData.password}
                 onChangeText={(text) => setFormData({ ...formData, password: text })}
                 secureTextEntry
@@ -231,18 +229,18 @@ export default function CreateGPProfileScreen() {
             {loading ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text style={styles.submitButtonText}>{t('createGPProfile.createButton')}</Text>
+              <Text style={styles.submitButtonText}>Créer mon profil GP</Text>
             )}
           </TouchableOpacity>
 
           <Text style={styles.disclaimer}>
-            {t('createGPProfile.disclaimer').split('conditions d\'utilisation')[0]}
+            En créant un profil GP, vous acceptez nos{' '}
             <Text style={styles.link} onPress={() => router.push('/terms')}>
-              {t('createGPProfile.termsLink')}
+              conditions d&apos;utilisation
             </Text>
-            {t('createGPProfile.disclaimer').includes('et notre') && ' ' + t('createGPProfile.disclaimer').split('et notre')[1].split('politique de confidentialité')[0]}
+            {' '}et notre{' '}
             <Text style={styles.link} onPress={() => router.push('/privacy')}>
-              {t('createGPProfile.privacyLink')}
+              politique de confidentialité
             </Text>
             .
           </Text>
