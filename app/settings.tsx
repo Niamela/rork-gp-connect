@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Switch,
   Alert,
-  Modal,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { 
@@ -17,29 +16,18 @@ import {
   Shield, 
   Trash2,
   Download,
-  Lock,
-  X
+  Lock
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useTheme } from '@/contexts/ThemeContext';
 
 export default function SettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { clearUserProfile } = useUser();
-  const { language, changeLanguage, t } = useLanguage();
-  const { theme, setThemeMode, colors } = useTheme();
   
+  const [darkMode, setDarkMode] = useState(false);
   const [autoDownload, setAutoDownload] = useState(true);
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
-  
-  const isDarkMode = theme === 'dark';
-  
-  const toggleDarkMode = async (value: boolean) => {
-    await setThemeMode(value ? 'dark' : 'light');
-  };
 
   const handleDeleteAccount = () => {
     Alert.alert(
@@ -76,11 +64,11 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={styles.container}>
       <Stack.Screen
         options={{
           headerShown: true,
-          headerTitle: t('settings.title'),
+          headerTitle: 'Paramètres',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color="#2C3E50" />
@@ -94,50 +82,48 @@ export default function SettingsScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 20 }]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.section, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('settings.appearance')}</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Apparence</Text>
           
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <Moon size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>{t('settings.darkMode')}</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  {t('settings.darkModeDesc')}
+                <Text style={styles.settingTitle}>Mode sombre</Text>
+                <Text style={styles.settingDescription}>
+                  Activer le thème sombre
                 </Text>
               </View>
             </View>
             <Switch
-              value={isDarkMode}
-              onValueChange={toggleDarkMode}
+              value={darkMode}
+              onValueChange={setDarkMode}
               trackColor={{ false: '#E9ECEF', true: '#FF6B35' }}
               thumbColor="white"
             />
           </View>
 
-          <TouchableOpacity style={styles.settingItem} onPress={() => setShowLanguageModal(true)}>
+          <TouchableOpacity style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <Globe size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>{t('settings.language')}</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  {language === 'fr' ? t('settings.languageFr') : t('settings.languageEn')}
-                </Text>
+                <Text style={styles.settingTitle}>Langue</Text>
+                <Text style={styles.settingDescription}>Français</Text>
               </View>
             </View>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.section, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('settings.dataStorage')}</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Données et stockage</Text>
           
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <Download size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>{t('settings.autoDownload')}</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  {t('settings.autoDownloadDesc')}
+                <Text style={styles.settingTitle}>Téléchargement automatique</Text>
+                <Text style={styles.settingDescription}>
+                  Télécharger automatiquement les images
                 </Text>
               </View>
             </View>
@@ -153,17 +139,17 @@ export default function SettingsScreen() {
             <View style={styles.settingLeft}>
               <Trash2 size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>{t('settings.clearCache')}</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  {t('settings.clearCacheDesc')}
+                <Text style={styles.settingTitle}>Vider le cache</Text>
+                <Text style={styles.settingDescription}>
+                  Libérer de l&apos;espace de stockage
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.section, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('settings.privacySecurity')}</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Confidentialité et sécurité</Text>
           
           <TouchableOpacity 
             style={styles.settingItem}
@@ -172,9 +158,9 @@ export default function SettingsScreen() {
             <View style={styles.settingLeft}>
               <Shield size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>{t('settings.privacyPolicy')}</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  {t('settings.privacyPolicyDesc')}
+                <Text style={styles.settingTitle}>Politique de confidentialité</Text>
+                <Text style={styles.settingDescription}>
+                  Voir notre politique de confidentialité
                 </Text>
               </View>
             </View>
@@ -184,17 +170,17 @@ export default function SettingsScreen() {
             <View style={styles.settingLeft}>
               <Lock size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={[styles.settingTitle, { color: colors.text }]}>{t('settings.accountSecurity')}</Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  {t('settings.accountSecurityDesc')}
+                <Text style={styles.settingTitle}>Sécurité du compte</Text>
+                <Text style={styles.settingDescription}>
+                  Gérer la sécurité de votre compte
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.section, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('settings.dangerZone')}</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Zone dangereuse</Text>
           
           <TouchableOpacity 
             style={[styles.settingItem, styles.dangerItem]}
@@ -203,93 +189,23 @@ export default function SettingsScreen() {
             <View style={styles.settingLeft}>
               <Trash2 size={20} color="#DC3545" />
               <View style={styles.settingText}>
-                <Text style={styles.dangerText}>
-                  {t('settings.deleteAccount')}
+                <Text style={[styles.settingTitle, styles.dangerText]}>
+                  Supprimer le compte
                 </Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  {t('settings.deleteAccountDesc')}
+                <Text style={styles.settingDescription}>
+                  Supprimer définitivement votre compte
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.infoBox, { backgroundColor: colors.background }]}>
-          <Text style={[styles.infoText, { color: colors.text }]}>
-            {t('settings.deleteAccountWarning')}
+        <View style={styles.infoBox}>
+          <Text style={styles.infoText}>
+            ⚠️ La suppression de votre compte est irréversible. Toutes vos données seront définitivement supprimées.
           </Text>
         </View>
       </ScrollView>
-
-      <Modal
-        visible={showLanguageModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowLanguageModal(false)}
-      >
-        <View style={[styles.modalOverlay, { backgroundColor: colors.modalOverlay }]}>
-          <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <View style={[styles.modalHeader, { borderBottomColor: colors.border }]}>
-              <Text style={[styles.modalTitle, { color: colors.text }]}>{t('settings.language')}</Text>
-              <TouchableOpacity onPress={() => setShowLanguageModal(false)}>
-                <X size={24} color={colors.text} />
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              style={[
-                styles.languageOption,
-                language === 'fr' && { backgroundColor: colors.inputBackground },
-                { borderBottomColor: colors.border },
-              ]}
-              onPress={async () => {
-                await changeLanguage('fr');
-                setShowLanguageModal(false);
-              }}
-            >
-              <View style={styles.languageOptionContent}>
-                <Text style={[
-                  { color: colors.text },
-                  language === 'fr' && styles.languageOptionTextActive,
-                ]}>
-                  Français
-                </Text>
-                {language === 'fr' && (
-                  <View style={styles.checkIcon}>
-                    <Text style={styles.checkIconText}>✓</Text>
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.languageOption,
-                language === 'en' && { backgroundColor: colors.inputBackground },
-                { borderBottomColor: colors.border },
-              ]}
-              onPress={async () => {
-                await changeLanguage('en');
-                setShowLanguageModal(false);
-              }}
-            >
-              <View style={styles.languageOptionContent}>
-                <Text style={[
-                  { color: colors.text },
-                  language === 'en' && styles.languageOptionTextActive,
-                ]}>
-                  English
-                </Text>
-                {language === 'en' && (
-                  <View style={styles.checkIcon}>
-                    <Text style={styles.checkIconText}>✓</Text>
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
@@ -369,66 +285,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2C3E50',
     lineHeight: 20,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 24,
-    width: '85%',
-    maxWidth: 400,
-    overflow: 'hidden',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E9ECEF',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2C3E50',
-  },
-  languageOption: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F8F9FA',
-  },
-  languageOptionActive: {
-    backgroundColor: '#FFF5F0',
-  },
-  languageOptionContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  languageOptionText: {
-    fontSize: 16,
-    color: '#2C3E50',
-  },
-  languageOptionTextActive: {
-    fontWeight: '600',
-    color: '#FF6B35',
-  },
-  checkIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#FF6B35',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkIconText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
   },
 });
