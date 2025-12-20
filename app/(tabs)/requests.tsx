@@ -278,16 +278,16 @@ export default function RequestsScreen() {
         
         {hasActiveFilters && (
           <View style={styles.activeFiltersContainer}>
-            <Text style={styles.activeFiltersLabel}>Filtres actifs:</Text>
+            <Text style={styles.activeFiltersLabel}>{t('requests.activeFilters')}</Text>
             <View style={styles.filterTagsContainer}>
               {filterFromCountry && (
                 <View style={styles.filterTag}>
-                  <Text style={styles.filterTagText}>De: {filterFromCountry}</Text>
+                  <Text style={styles.filterTagText}>{t('requests.from')}: {filterFromCountry}</Text>
                 </View>
               )}
               {filterToCountry && (
                 <View style={styles.filterTag}>
-                  <Text style={styles.filterTagText}>Vers: {filterToCountry}</Text>
+                  <Text style={styles.filterTagText}>{t('requests.to')}: {filterToCountry}</Text>
                 </View>
               )}
               {filterProductType && (
@@ -297,7 +297,7 @@ export default function RequestsScreen() {
               )}
               <TouchableOpacity onPress={clearFilters} style={styles.clearFiltersButton}>
                 <XCircle size={16} color="#FF6B35" />
-                <Text style={styles.clearFiltersText}>Effacer</Text>
+                <Text style={styles.clearFiltersText}>{t('requests.clear')}</Text>
               </TouchableOpacity>
             </View>
           </View>
