@@ -74,11 +74,23 @@ export const [RequestsProvider, useRequests] = createContextHook(() => {
     await saveRequests(updated);
   }, [requests, saveRequests]);
 
+  const clearAllRequests = useCallback(async () => {
+    try {
+      await AsyncStorage.removeItem(REQUESTS_STORAGE_KEY);
+      setRequests([]);
+      console.log('[RequestsContext] All requests cleared');
+    } catch (error) {
+      console.error('[RequestsContext] Error clearing requests:', error);
+      throw error;
+    }
+  }, []);
+
   return useMemo(() => ({
     requests,
     isLoading,
     addRequest,
     deleteRequest,
+    clearAllRequests,
     refetch: loadRequests,
-  }), [requests, isLoading, addRequest, deleteRequest, loadRequests]);
+  }), [requests, isLoading, addRequest, deleteRequest, clearAllRequests, loadRequests]);
 });

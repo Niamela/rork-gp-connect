@@ -21,12 +21,18 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTravels } from '@/contexts/TravelsContext';
+import { useRequests } from '@/contexts/RequestsContext';
+import { useMessages } from '@/contexts/MessagesContext';
 
 export default function SettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { clearUserProfile } = useUser();
   const { language, changeLanguage, t } = useLanguage();
+  const { clearAllTravels } = useTravels();
+  const { clearAllRequests } = useRequests();
+  const { clearAllMessages } = useMessages();
   
   const [darkMode, setDarkMode] = useState(false);
   const [autoDownload, setAutoDownload] = useState(true);
@@ -59,6 +65,42 @@ export default function SettingsScreen() {
           text: 'Vider',
           onPress: () => {
             Alert.alert('Cache vidé', 'Le cache a été vidé avec succès');
+          },
+        },
+      ]
+    );
+  };
+
+  const handleClearAllData = () => {
+    Alert.alert(
+      language === 'fr' ? 'Supprimer toutes les données' : 'Delete All Data',
+      language === 'fr' 
+        ? 'Êtes-vous sûr de vouloir supprimer toutes les annonces, demandes et messages ? Cette action est irréversible.'
+        : 'Are you sure you want to delete all announcements, requests and messages? This action is irreversible.',
+      [
+        { text: language === 'fr' ? 'Annuler' : 'Cancel', style: 'cancel' },
+        {
+          text: language === 'fr' ? 'Supprimer tout' : 'Delete All',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await clearAllTravels();
+              await clearAllRequests();
+              await clearAllMessages();
+              Alert.alert(
+                language === 'fr' ? 'Données supprimées' : 'Data Deleted',
+                language === 'fr' 
+                  ? 'Toutes les données de test ont été supprimées avec succès'
+                  : 'All test data has been successfully deleted'
+              );
+            } catch {
+              Alert.alert(
+                'Erreur',
+                language === 'fr'
+                  ? 'Une erreur est survenue lors de la suppression des données'
+                  : 'An error occurred while deleting data'
+              );
+            }
           },
         },
       ]
@@ -195,6 +237,25 @@ export default function SettingsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('settings.dangerZone')}</Text>
           
+          <TouchableOpacity 
+            style={styles.settingItem}
+            onPress={handleClearAllData}
+          >
+            <View style={styles.settingLeft}>
+              <Trash2 size={20} color="#FF9800" />
+              <View style={styles.settingText}>
+                <Text style={[styles.settingTitle, { color: '#FF9800' }]}>
+                  {language === 'fr' ? 'Supprimer toutes les données de test' : 'Delete All Test Data'}
+                </Text>
+                <Text style={styles.settingDescription}>
+                  {language === 'fr' 
+                    ? 'Supprimer toutes les annonces, demandes et messages'
+                    : 'Delete all announcements, requests and messages'}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
           <TouchableOpacity 
             style={[styles.settingItem, styles.dangerItem]}
             onPress={handleDeleteAccount}

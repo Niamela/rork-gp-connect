@@ -182,6 +182,19 @@ export const [MessagesProvider, useMessages] = createContextHook(() => {
     await saveMessages(updatedMessages);
   }, [messages, saveMessages]);
 
+  const clearAllMessages = useCallback(async () => {
+    try {
+      await AsyncStorage.removeItem(CONVERSATIONS_STORAGE_KEY);
+      await AsyncStorage.removeItem(MESSAGES_STORAGE_KEY);
+      setConversations([]);
+      setMessages([]);
+      console.log('[MessagesContext] All messages and conversations cleared');
+    } catch (error) {
+      console.error('[MessagesContext] Error clearing messages:', error);
+      throw error;
+    }
+  }, []);
+
   return useMemo(() => ({
     conversations,
     messages,
@@ -191,9 +204,10 @@ export const [MessagesProvider, useMessages] = createContextHook(() => {
     createConversation,
     sendMessage,
     markAsRead,
+    clearAllMessages,
     refetch: () => {
       loadConversations();
       loadMessages();
     },
-  }), [conversations, messages, isLoading, getConversationsByUserId, getMessagesByConversationId, createConversation, sendMessage, markAsRead, loadConversations, loadMessages]);
+  }), [conversations, messages, isLoading, getConversationsByUserId, getMessagesByConversationId, createConversation, sendMessage, markAsRead, clearAllMessages, loadConversations, loadMessages]);
 });

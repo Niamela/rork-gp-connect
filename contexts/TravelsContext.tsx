@@ -135,6 +135,19 @@ export const [TravelsProvider, useTravels] = createContextHook(() => {
     });
   }, [travels, allProfiles]);
 
+  const clearAllTravels = useCallback(async () => {
+    try {
+      await AsyncStorage.removeItem(TRAVELS_STORAGE_KEY);
+      await AsyncStorage.removeItem(ALL_PROFILES_STORAGE_KEY);
+      setTravels([]);
+      setAllProfiles({});
+      console.log('[TravelsContext] All travels and profiles cleared');
+    } catch (error) {
+      console.error('[TravelsContext] Error clearing travels:', error);
+      throw error;
+    }
+  }, []);
+
   return useMemo(() => ({
     travels,
     isLoading,
@@ -143,6 +156,7 @@ export const [TravelsProvider, useTravels] = createContextHook(() => {
     deleteTravel,
     getGpTravels,
     getTravelsWithGPInfo,
+    clearAllTravels,
     refetch: loadTravels,
-  }), [travels, isLoading, addTravel, updateTravel, deleteTravel, getGpTravels, getTravelsWithGPInfo, loadTravels]);
+  }), [travels, isLoading, addTravel, updateTravel, deleteTravel, getGpTravels, getTravelsWithGPInfo, clearAllTravels, loadTravels]);
 });
