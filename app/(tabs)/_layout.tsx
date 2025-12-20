@@ -3,6 +3,7 @@ import { Home, Search, User, MessageSquare, Plus, MessageCircle } from "lucide-r
 import React, { useState } from "react";
 import { TouchableOpacity, View, StyleSheet, Alert } from "react-native";
 import { useUser } from "@/contexts/UserContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import CreateRequestModal from "@/components/CreateRequestModal";
 import CreateProfileModal from "@/components/CreateProfileModal";
 
@@ -65,6 +66,8 @@ function AddButton() {
 }
 
 export default function TabLayout() {
+  const { t } = useLanguage();
+  
   return (
     <Tabs
       screenOptions={{
@@ -91,14 +94,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Accueil",
+          title: t('tabs.home'),
           tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="browse"
         options={{
-          title: "Parcourir",
+          title: t('tabs.browse'),
           tabBarIcon: ({ color, size }) => <Search color={color} size={size} />,
         }}
       />
@@ -118,21 +121,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="requests"
         options={{
-          title: "Annonces",
+          title: t('tabs.requests'),
           tabBarIcon: ({ color, size }) => <MessageSquare color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="messages"
         options={{
-          title: "Messages",
+          title: t('tabs.messages'),
           tabBarIcon: ({ color, size }) => <MessageCircle color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profil",
+          title: t('tabs.profile'),
           tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
         }}
       />

@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
 import { useRequests } from '@/contexts/RequestsContext';
 import { useMessages } from '@/contexts/MessagesContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useRouter } from 'expo-router';
 
 interface Request {
@@ -36,6 +37,7 @@ export default function RequestsScreen() {
   const { hasProfile, userProfile, createProfile } = useUser();
   const { requests, addRequest, deleteRequest: deleteReq, isLoading } = useRequests();
   const { createConversation } = useMessages();
+  const { t } = useLanguage();
   
   const [modalVisible, setModalVisible] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
@@ -243,9 +245,9 @@ export default function RequestsScreen() {
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <View>
-          <Text style={styles.headerTitle}>Demandes de GP</Text>
+          <Text style={styles.headerTitle}>{t('requests.title')}</Text>
           <Text style={styles.headerSubtitle}>
-            Publiez votre demande et les GPs vous contacteront
+            {t('requests.subtitle')}
           </Text>
         </View>
         
@@ -255,7 +257,7 @@ export default function RequestsScreen() {
             <Search size={18} color="#6C757D" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Rechercher..."
+              placeholder={t('requests.search')}
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholderTextColor="#999"
@@ -304,33 +306,31 @@ export default function RequestsScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Comment ça marche ?</Text>
+          <Text style={styles.infoTitle}>{t('requests.howItWorks')}</Text>
           <Text style={styles.infoText}>
-            1. Publiez votre demande avec les détails de votre envoi{'\n'}
-            2. Les GPs disponibles verront votre annonce{'\n'}
-            3. Ils vous contacteront directement pour discuter
+            {t('requests.howItWorksText')}
           </Text>
         </View>
 
         <View style={styles.requestsHeader}>
           <Text style={styles.sectionTitle}>
             {searchQuery || hasActiveFilters 
-              ? `${filteredRequests.length} résultat${filteredRequests.length !== 1 ? 's' : ''} trouvé${filteredRequests.length !== 1 ? 's' : ''}`
-              : `Demandes récentes (${filteredRequests.length})`
+              ? t('requests.resultsFound', { count: filteredRequests.length.toString(), s: filteredRequests.length !== 1 ? 's' : '' })
+              : t('requests.recentRequests', { count: filteredRequests.length.toString() })
             }
           </Text>
         </View>
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Chargement...</Text>
+            <Text style={styles.loadingText}>{t('browse.loading')}</Text>
           </View>
         ) : filteredRequests.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>
               {searchQuery || hasActiveFilters 
-                ? 'Aucune demande ne correspond à vos critères'
-                : 'Aucune demande pour le moment'
+                ? t('requests.noResults')
+                : t('requests.noRequests')
               }
             </Text>
           </View>

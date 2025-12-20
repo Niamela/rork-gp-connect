@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTravels } from '@/contexts/TravelsContext';
 import { useUser } from '@/contexts/UserContext';
 import { useMessages } from '@/contexts/MessagesContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useRouter } from 'expo-router';
 import type { TravelAnnouncement } from '@/contexts/UserContext';
 
@@ -24,6 +25,7 @@ export default function BrowseScreen() {
   const { userProfile } = useUser();
   const { getTravelsWithGPInfo, isLoading } = useTravels();
   const { createConversation } = useMessages();
+  const { t } = useLanguage();
   const travelsWithInfo = getTravelsWithGPInfo();
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -97,7 +99,7 @@ export default function BrowseScreen() {
           <Search size={20} color="#6C757D" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Rechercher des GPs ou des itinéraires..."
+            placeholder={t('browse.searchPlaceholder')}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholderTextColor="#999"
@@ -114,22 +116,22 @@ export default function BrowseScreen() {
       <ScrollView style={styles.resultsContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.resultsHeader}>
           <Text style={styles.resultsCount}>
-            {filteredTravels.length} voyage{filteredTravels.length !== 1 ? 's' : ''} trouvé{filteredTravels.length !== 1 ? 's' : ''}
+            {t('browse.resultsCount', { count: filteredTravels.length.toString(), s: filteredTravels.length !== 1 ? 's' : '' })}
           </Text>
           {hasActiveFilters && (
             <TouchableOpacity onPress={clearFilters} style={styles.clearFiltersButton}>
-              <Text style={styles.clearFiltersText}>Réinitialiser</Text>
+              <Text style={styles.clearFiltersText}>{t('browse.reset')}</Text>
             </TouchableOpacity>
           )}
         </View>
 
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Chargement...</Text>
+            <Text style={styles.loadingText}>{t('browse.loading')}</Text>
           </View>
         ) : filteredTravels.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Aucun voyage disponible pour le moment</Text>
+            <Text style={styles.emptyText}>{t('browse.noTravels')}</Text>
           </View>
         ) : (
           filteredTravels.map((travel) => {
@@ -165,7 +167,7 @@ export default function BrowseScreen() {
                     </View>
                     <View style={styles.gpType}>
                       <View style={[styles.typeTag, { backgroundColor: '#28A745' }]}>
-                        <Text style={styles.typeText}>Grand Passager</Text>
+                        <Text style={styles.typeText}>{t('browse.grandPassenger')}</Text>
                       </View>
                     </View>
                   </View>
@@ -182,15 +184,15 @@ export default function BrowseScreen() {
                   <View style={styles.gpMeta}>
                     <View style={styles.metaItem}>
                       <Clock size={12} color="#6C757D" />
-                      <Text style={styles.metaText}>Départ: {travel.departureDate}</Text>
+                      <Text style={styles.metaText}>{t('browse.departure')}: {travel.departureDate}</Text>
                     </View>
                     <View style={styles.metaItem}>
                       <Package size={12} color="#6C757D" />
-                      <Text style={styles.metaText}>Max: {travel.maxWeight}kg</Text>
+                      <Text style={styles.metaText}>{t('browse.max')}: {travel.maxWeight}kg</Text>
                     </View>
                   </View>
                   <View style={styles.availableSpace}>
-                    <Text style={styles.availableSpaceText}>Espace disponible: {travel.availableSpace}</Text>
+                    <Text style={styles.availableSpaceText}>{t('browse.availableSpace')}: {travel.availableSpace}</Text>
                   </View>
                 </View>
 
@@ -202,7 +204,7 @@ export default function BrowseScreen() {
                   }}
                 >
                   <MessageCircle size={16} color="white" />
-                  <Text style={styles.contactButtonText}>Contacter</Text>
+                  <Text style={styles.contactButtonText}>{t('browse.contact')}</Text>
                 </TouchableOpacity>
               </TouchableOpacity>
             );
@@ -219,7 +221,7 @@ export default function BrowseScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Filtres de recherche</Text>
+              <Text style={styles.modalTitle}>{t('browse.filterTitle')}</Text>
               <TouchableOpacity onPress={() => setShowFilterModal(false)}>
                 <X size={24} color="#2C3E50" />
               </TouchableOpacity>
@@ -227,7 +229,7 @@ export default function BrowseScreen() {
 
             <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
               <View style={styles.filterGroup}>
-                <Text style={styles.filterLabel}>Pays de départ</Text>
+                <Text style={styles.filterLabel}>{t('browse.fromCountry')}</Text>
                 <View style={styles.filterInputContainer}>
                   <MapPin size={18} color="#FF6B35" />
                   <TextInput
@@ -241,7 +243,7 @@ export default function BrowseScreen() {
               </View>
 
               <View style={styles.filterGroup}>
-                <Text style={styles.filterLabel}>Pays d&apos;arrivée</Text>
+                <Text style={styles.filterLabel}>{t('browse.toCountry')}</Text>
                 <View style={styles.filterInputContainer}>
                   <MapPin size={18} color="#FF6B35" />
                   <TextInput
@@ -255,7 +257,7 @@ export default function BrowseScreen() {
               </View>
 
               <View style={styles.filterGroup}>
-                <Text style={styles.filterLabel}>Poids minimum disponible (kg)</Text>
+                <Text style={styles.filterLabel}>{t('browse.minWeight')}</Text>
                 <View style={styles.filterInputContainer}>
                   <Package size={18} color="#FF6B35" />
                   <TextInput
@@ -270,7 +272,7 @@ export default function BrowseScreen() {
               </View>
 
               <View style={styles.filterGroup}>
-                <Text style={styles.filterLabel}>Date de départ</Text>
+                <Text style={styles.filterLabel}>{t('browse.departureDate')}</Text>
                 <View style={styles.filterInputContainer}>
                   <Clock size={18} color="#FF6B35" />
                   <TextInput
@@ -284,7 +286,7 @@ export default function BrowseScreen() {
               </View>
 
               <View style={styles.filterGroup}>
-                <Text style={styles.filterLabel}>Prix maximum (F/kg)</Text>
+                <Text style={styles.filterLabel}>{t('browse.maxPrice')}</Text>
                 <View style={styles.filterInputContainer}>
                   <Text style={styles.filterCurrencyIcon}>F</Text>
                   <TextInput
@@ -304,7 +306,7 @@ export default function BrowseScreen() {
                 style={styles.clearButton}
                 onPress={clearFilters}
               >
-                <Text style={styles.clearButtonText}>Réinitialiser</Text>
+                <Text style={styles.clearButtonText}>{t('browse.reset')}</Text>
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.applyButton}
@@ -313,7 +315,7 @@ export default function BrowseScreen() {
                   console.log('[Filter] Applied filters:', { filterFrom, filterTo, filterMaxWeight, filterDate, filterMaxPrice });
                 }}
               >
-                <Text style={styles.applyButtonText}>Appliquer</Text>
+                <Text style={styles.applyButtonText}>{t('browse.apply')}</Text>
               </TouchableOpacity>
             </View>
           </View>
