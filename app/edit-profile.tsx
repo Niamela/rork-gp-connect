@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, Save, Camera, Trash2 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
@@ -19,6 +20,7 @@ export default function EditProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { userProfile, updateUserProfile } = useUser();
+  const { t } = useLanguage();
   
   const [firstName, setFirstName] = useState(userProfile?.firstName || '');
   const [lastName, setLastName] = useState(userProfile?.lastName || '');
@@ -105,7 +107,7 @@ export default function EditProfileScreen() {
       <Stack.Screen
         options={{
           headerShown: true,
-          headerTitle: 'Modifier le profil',
+          headerTitle: t('editProfile.title'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color="#2C3E50" />
@@ -120,7 +122,7 @@ export default function EditProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Photo de profil</Text>
+          <Text style={styles.sectionTitle}>{t('editProfile.profilePhoto')}</Text>
           
           <View style={styles.imageSection}>
             <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
@@ -136,11 +138,11 @@ export default function EditProfileScreen() {
               </View>
             </TouchableOpacity>
             <View style={styles.imageActionsContainer}>
-              <Text style={styles.imageHint}>Appuyez pour changer la photo</Text>
+              <Text style={styles.imageHint}>{t('editProfile.tapToChange')}</Text>
               {profileImageUri && (
                 <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}>
                   <Trash2 size={16} color="#DC3545" />
-                  <Text style={styles.deleteButtonText}>Supprimer</Text>
+                  <Text style={styles.deleteButtonText}>{t('editProfile.delete')}</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -148,48 +150,48 @@ export default function EditProfileScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informations personnelles</Text>
+          <Text style={styles.sectionTitle}>{t('editProfile.personalInfo')}</Text>
           
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Prénom *</Text>
+            <Text style={styles.label}>{t('auth.firstName')} *</Text>
             <TextInput
               style={styles.input}
               value={firstName}
               onChangeText={setFirstName}
-              placeholder="Entrez votre prénom"
+              placeholder={t('editProfile.firstNamePlaceholder')}
               placeholderTextColor="#ADB5BD"
             />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Nom *</Text>
+            <Text style={styles.label}>{t('auth.lastName')} *</Text>
             <TextInput
               style={styles.input}
               value={lastName}
               onChangeText={setLastName}
-              placeholder="Entrez votre nom"
+              placeholder={t('editProfile.lastNamePlaceholder')}
               placeholderTextColor="#ADB5BD"
             />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Pays *</Text>
+            <Text style={styles.label}>{t('auth.country')} *</Text>
             <TextInput
               style={styles.input}
               value={country}
               onChangeText={setCountry}
-              placeholder="Entrez votre pays"
+              placeholder={t('editProfile.countryPlaceholder')}
               placeholderTextColor="#ADB5BD"
             />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Contact *</Text>
+            <Text style={styles.label}>{t('requests.contactInfo')} *</Text>
             <TextInput
               style={styles.input}
               value={contact}
               onChangeText={setContact}
-              placeholder="Email ou téléphone"
+              placeholder={t('editProfile.contactPlaceholder')}
               placeholderTextColor="#ADB5BD"
               keyboardType="email-address"
               autoCapitalize="none"
@@ -199,7 +201,7 @@ export default function EditProfileScreen() {
 
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>
-            * Tous les champs sont obligatoires
+            {t('editProfile.requiredFields')}
           </Text>
         </View>
 
@@ -210,7 +212,7 @@ export default function EditProfileScreen() {
         >
           <Save size={20} color="white" />
           <Text style={styles.saveButtonText}>
-            {isLoading ? 'Enregistrement...' : 'Enregistrer les modifications'}
+            {isLoading ? t('editProfile.saving') : t('editProfile.saveChanges')}
           </Text>
         </TouchableOpacity>
       </ScrollView>

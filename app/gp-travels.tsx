@@ -25,12 +25,14 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
 import { useTravels } from '@/contexts/TravelsContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function GPTravelsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { userProfile, addTravelAnnouncement, updateTravelAnnouncement, deleteTravelAnnouncement } = useUser();
   const { addTravel, updateTravel, deleteTravel } = useTravels();
+  const { t } = useLanguage();
   
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -156,15 +158,15 @@ export default function GPTravelsScreen() {
         />
         <View style={styles.notSubscribedContainer}>
           <Plane size={64} color="#6C757D" />
-          <Text style={styles.notSubscribedTitle}>Abonnement requis</Text>
+          <Text style={styles.notSubscribedTitle}>{t('gpTravels.subscriptionRequired')}</Text>
           <Text style={styles.notSubscribedText}>
-            Vous devez être abonné en tant que GP pour gérer vos annonces de voyage.
+            {t('gpTravels.subscriptionRequiredText')}
           </Text>
           <TouchableOpacity
             style={styles.subscribeButton}
             onPress={() => router.back()}
           >
-            <Text style={styles.subscribeButtonText}>Retour au profil</Text>
+            <Text style={styles.subscribeButtonText}>{t('gpTravels.backToProfile')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -175,7 +177,7 @@ export default function GPTravelsScreen() {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          title: 'Mes Voyages',
+          title: t('gpTravels.title'),
           headerStyle: { backgroundColor: '#FF6B35' },
           headerTintColor: 'white',
         }}
@@ -186,9 +188,9 @@ export default function GPTravelsScreen() {
           colors={['#FF6B35', '#F7931E']}
           style={[styles.header, { paddingTop: insets.top + 20 }]}
         >
-          <Text style={styles.headerTitle}>Gérer mes voyages</Text>
+          <Text style={styles.headerTitle}>{t('gpTravels.manageTrips')}</Text>
           <Text style={styles.headerSubtitle}>
-            Ajoutez et mettez à jour vos destinations de voyage
+            {t('gpTravels.subtitle')}
           </Text>
         </LinearGradient>
 
@@ -198,15 +200,15 @@ export default function GPTravelsScreen() {
             onPress={() => handleOpenModal()}
           >
             <Plus size={24} color="white" />
-            <Text style={styles.addButtonText}>Ajouter un voyage</Text>
+            <Text style={styles.addButtonText}>{t('gpTravels.addTrip')}</Text>
           </TouchableOpacity>
 
           {travelAnnouncements.length === 0 ? (
             <View style={styles.emptyState}>
               <Plane size={48} color="#6C757D" />
-              <Text style={styles.emptyStateTitle}>Aucun voyage</Text>
+              <Text style={styles.emptyStateTitle}>{t('gpTravels.noTrips')}</Text>
               <Text style={styles.emptyStateText}>
-                Commencez par ajouter votre première annonce de voyage
+                {t('gpTravels.noTripsText')}
               </Text>
             </View>
           ) : (
@@ -240,13 +242,13 @@ export default function GPTravelsScreen() {
                     <View style={styles.detailRow}>
                       <Calendar size={14} color="#6C757D" />
                       <Text style={styles.detailText}>
-                        Départ: {announcement.departureDate}
+                        {t('gpTravels.departure')}: {announcement.departureDate}
                       </Text>
                     </View>
                     <View style={styles.detailRow}>
                       <Package size={14} color="#6C757D" />
                       <Text style={styles.detailText}>
-                        Max: {announcement.maxWeight} kg
+                        {t('gpTravels.max')}: {announcement.maxWeight} kg
                       </Text>
                     </View>
                     <View style={styles.detailRow}>
@@ -259,14 +261,14 @@ export default function GPTravelsScreen() {
                       <View style={styles.detailRow}>
                         <Package size={14} color="#6C757D" />
                         <Text style={styles.detailText}>
-                          Espace: {announcement.availableSpace}
+                          {t('gpTravels.space')}: {announcement.availableSpace}
                         </Text>
                       </View>
                     )}
                   </View>
 
                   <Text style={styles.updatedText}>
-                    Mis à jour: {new Date(announcement.updatedAt).toLocaleDateString('fr-FR')}
+                    {t('gpTravels.updated')}: {new Date(announcement.updatedAt).toLocaleDateString('fr-FR')}
                   </Text>
                 </View>
               ))}
@@ -285,7 +287,7 @@ export default function GPTravelsScreen() {
           <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>
-                {editingId ? 'Modifier le voyage' : 'Nouveau voyage'}
+                {editingId ? t('gpTravels.editTrip') : t('gpTravels.newTrip')}
               </Text>
               <TouchableOpacity onPress={handleCloseModal}>
                 <X size={24} color="#2C3E50" />
@@ -295,12 +297,12 @@ export default function GPTravelsScreen() {
             <ScrollView showsVerticalScrollIndicator={false}>
               <View style={styles.formContainer}>
                 <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Pays de départ *</Text>
+                  <Text style={styles.label}>{t('gpTravels.departureCountry')} *</Text>
                   <View style={styles.inputContainer}>
                     <MapPin size={20} color="#FF6B35" />
                     <TextInput
                       style={styles.input}
-                      placeholder="Ex: Mali"
+                      placeholder={t('gpTravels.exampleMali')}
                       value={formData.fromCountry}
                       onChangeText={(text) => setFormData({ ...formData, fromCountry: text })}
                       placeholderTextColor="#999"
@@ -309,12 +311,12 @@ export default function GPTravelsScreen() {
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Pays de destination *</Text>
+                  <Text style={styles.label}>{t('gpTravels.destinationCountry')} *</Text>
                   <View style={styles.inputContainer}>
                     <MapPin size={20} color="#FF6B35" />
                     <TextInput
                       style={styles.input}
-                      placeholder="Ex: Dubaï"
+                      placeholder={t('gpTravels.exampleDubai')}
                       value={formData.toCountry}
                       onChangeText={(text) => setFormData({ ...formData, toCountry: text })}
                       placeholderTextColor="#999"
@@ -323,12 +325,12 @@ export default function GPTravelsScreen() {
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Date de départ *</Text>
+                  <Text style={styles.label}>{t('gpTravels.departureDate')} *</Text>
                   <View style={styles.inputContainer}>
                     <Calendar size={20} color="#FF6B35" />
                     <TextInput
                       style={styles.input}
-                      placeholder="Ex: 15 Janvier 2025"
+                      placeholder={t('gpTravels.exampleDate')}
                       value={formData.departureDate}
                       onChangeText={(text) => setFormData({ ...formData, departureDate: text })}
                       placeholderTextColor="#999"
@@ -337,12 +339,12 @@ export default function GPTravelsScreen() {
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Poids maximum (kg)</Text>
+                  <Text style={styles.label}>{t('gpTravels.maxWeight')}</Text>
                   <View style={styles.inputContainer}>
                     <Package size={20} color="#FF6B35" />
                     <TextInput
                       style={styles.input}
-                      placeholder="Ex: 23"
+                      placeholder={t('gpTravels.exampleWeight')}
                       value={formData.maxWeight}
                       onChangeText={(text) => setFormData({ ...formData, maxWeight: text })}
                       keyboardType="numeric"
@@ -352,12 +354,12 @@ export default function GPTravelsScreen() {
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Prix par kg (F CFA)</Text>
+                  <Text style={styles.label}>{t('gpTravels.pricePerKg')}</Text>
                   <View style={styles.inputContainer}>
                     <DollarSign size={20} color="#FF6B35" />
                     <TextInput
                       style={styles.input}
-                      placeholder="Ex: 5000"
+                      placeholder={t('gpTravels.examplePrice')}
                       value={formData.pricePerKg}
                       onChangeText={(text) => setFormData({ ...formData, pricePerKg: text })}
                       keyboardType="numeric"
@@ -367,12 +369,12 @@ export default function GPTravelsScreen() {
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Espace disponible</Text>
+                  <Text style={styles.label}>{t('gpTravels.availableSpace')}</Text>
                   <View style={styles.inputContainer}>
                     <Package size={20} color="#FF6B35" />
                     <TextInput
                       style={styles.input}
-                      placeholder="Ex: 2 valises"
+                      placeholder={t('gpTravels.exampleSpace')}
                       value={formData.availableSpace}
                       onChangeText={(text) => setFormData({ ...formData, availableSpace: text })}
                       placeholderTextColor="#999"
@@ -382,7 +384,7 @@ export default function GPTravelsScreen() {
 
                 <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                   <Text style={styles.saveButtonText}>
-                    {editingId ? 'Mettre à jour' : 'Ajouter'}
+                    {editingId ? t('gpTravels.update') : t('gpTravels.add')}
                   </Text>
                 </TouchableOpacity>
               </View>

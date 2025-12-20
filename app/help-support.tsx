@@ -17,6 +17,7 @@ import {
   Video
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const faqItems = [
   {
@@ -40,6 +41,7 @@ const faqItems = [
 export default function HelpSupportScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useLanguage();
 
   const handleContactEmail = () => {
     Linking.openURL('mailto:support@gpconnect.com');
@@ -56,7 +58,7 @@ export default function HelpSupportScreen() {
       <Stack.Screen
         options={{
           headerShown: true,
-          headerTitle: 'Aide & Support',
+          headerTitle: t('helpSupport.title'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color="#2C3E50" />
@@ -71,16 +73,16 @@ export default function HelpSupportScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contactez-nous</Text>
+          <Text style={styles.sectionTitle}>{t('helpSupport.contactUs')}</Text>
           
           <TouchableOpacity style={styles.contactCard} onPress={handleLiveChat}>
             <View style={styles.contactIcon}>
               <MessageCircle size={24} color="#FF6B35" />
             </View>
             <View style={styles.contactInfo}>
-              <Text style={styles.contactTitle}>Chat en direct</Text>
+              <Text style={styles.contactTitle}>{t('helpSupport.liveChat')}</Text>
               <Text style={styles.contactDescription}>
-                Discutez avec notre équipe
+                {t('helpSupport.liveChatDesc')}
               </Text>
             </View>
           </TouchableOpacity>
@@ -92,14 +94,14 @@ export default function HelpSupportScreen() {
             <View style={styles.contactInfo}>
               <Text style={styles.contactTitle}>Email</Text>
               <Text style={styles.contactDescription}>
-                support@gpconnect.com
+                {t('helpSupport.emailDesc')}
               </Text>
             </View>
           </TouchableOpacity>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Questions fréquentes</Text>
+          <Text style={styles.sectionTitle}>{t('helpSupport.faq')}</Text>
           
           {faqItems.map((item, index) => (
             <View key={index} style={styles.faqItem}>
@@ -113,22 +115,22 @@ export default function HelpSupportScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Ressources</Text>
+          <Text style={styles.sectionTitle}>{t('helpSupport.resources')}</Text>
           
           <TouchableOpacity style={styles.resourceItem}>
             <Book size={20} color="#FF6B35" />
-            <Text style={styles.resourceText}>Guide d&apos;utilisation</Text>
+            <Text style={styles.resourceText}>{t('helpSupport.userGuide')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.resourceItem}>
             <Video size={20} color="#FF6B35" />
-            <Text style={styles.resourceText}>Tutoriels vidéo</Text>
+            <Text style={styles.resourceText}>{t('helpSupport.videoTutorials')}</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>
-            💡 Notre équipe de support est disponible du lundi au vendredi de 9h à 18h (GMT). Nous répondons généralement dans les 24 heures.
+            {t('helpSupport.info')}
           </Text>
         </View>
       </ScrollView>

@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Stack } from 'expo-router';
 import { Mail, Send } from 'lucide-react-native';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ContactScreen() {
+  const { t } = useLanguage();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
@@ -34,27 +36,27 @@ export default function ContactScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Contact' }} />
+      <Stack.Screen options={{ title: t('contact.title') }} />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <View style={styles.iconContainer}>
             <Mail size={40} color="#FF6B35" />
           </View>
-          <Text style={styles.title}>Contactez-nous</Text>
+          <Text style={styles.title}>{t('contact.title')}</Text>
           <Text style={styles.subtitle}>
-            Nous sommes là pour vous aider. N&apos;hésitez pas à nous contacter.
+            {t('contact.subtitle')}
           </Text>
         </View>
 
         <View style={styles.content}>
           <View style={styles.formSection}>
-            <Text style={styles.sectionTitle}>Envoyez-nous un message</Text>
+            <Text style={styles.sectionTitle}>{t('contact.sendMessage')}</Text>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Nom complet *</Text>
+              <Text style={styles.label}>{t('contact.fullName')} *</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Votre nom"
+                placeholder={t('contact.namePlaceholder')}
                 value={name}
                 onChangeText={setName}
                 placeholderTextColor="#999"
@@ -65,7 +67,7 @@ export default function ContactScreen() {
               <Text style={styles.label}>Email *</Text>
               <TextInput
                 style={styles.input}
-                placeholder="votre@email.com"
+                placeholder={t('contact.emailPlaceholder')}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -75,10 +77,10 @@ export default function ContactScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Sujet *</Text>
+              <Text style={styles.label}>{t('contact.subject')} *</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Sujet de votre message"
+                placeholder={t('contact.subjectPlaceholder')}
                 value={subject}
                 onChangeText={setSubject}
                 placeholderTextColor="#999"
@@ -86,10 +88,10 @@ export default function ContactScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Message *</Text>
+              <Text style={styles.label}>{t('contact.message')} *</Text>
               <TextInput
                 style={[styles.input, styles.textArea]}
-                placeholder="Décrivez votre demande..."
+                placeholder={t('contact.messagePlaceholder')}
                 value={message}
                 onChangeText={setMessage}
                 multiline
@@ -101,15 +103,15 @@ export default function ContactScreen() {
 
             <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
               <Send size={20} color="white" />
-              <Text style={styles.submitButtonText}>Envoyer le message</Text>
+              <Text style={styles.submitButtonText}>{t('contact.send')}</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.hoursSection}>
-            <Text style={styles.sectionTitle}>Heures d&apos;ouverture</Text>
-            <Text style={styles.hoursText}>Lundi - Vendredi : 9h00 - 18h00</Text>
-            <Text style={styles.hoursText}>Samedi : 10h00 - 16h00</Text>
-            <Text style={styles.hoursText}>Dimanche : Fermé</Text>
+            <Text style={styles.sectionTitle}>{t('contact.openingHours')}</Text>
+            <Text style={styles.hoursText}>{t('contact.mondayFriday')}</Text>
+            <Text style={styles.hoursText}>{t('contact.saturday')}</Text>
+            <Text style={styles.hoursText}>{t('contact.sunday')}</Text>
           </View>
         </View>
       </ScrollView>

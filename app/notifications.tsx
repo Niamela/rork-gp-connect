@@ -10,10 +10,12 @@ import {
 import { Stack, useRouter } from 'expo-router';
 import { ArrowLeft, Bell, MessageSquare, Package, Star } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function NotificationsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useLanguage();
   
   const [pushEnabled, setPushEnabled] = useState(true);
   const [emailEnabled, setEmailEnabled] = useState(true);
@@ -27,7 +29,7 @@ export default function NotificationsScreen() {
       <Stack.Screen
         options={{
           headerShown: true,
-          headerTitle: 'Notifications',
+          headerTitle: t('notifications.title'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color="#2C3E50" />
@@ -42,15 +44,15 @@ export default function NotificationsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Canaux de notification</Text>
+          <Text style={styles.sectionTitle}>{t('notifications.channels')}</Text>
           
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <Bell size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Notifications push</Text>
+                <Text style={styles.settingTitle}>{t('notifications.push')}</Text>
                 <Text style={styles.settingDescription}>
-                  Recevoir des notifications sur votre appareil
+                  {t('notifications.pushDesc')}
                 </Text>
               </View>
             </View>
@@ -66,9 +68,9 @@ export default function NotificationsScreen() {
             <View style={styles.settingLeft}>
               <Bell size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Notifications par email</Text>
+                <Text style={styles.settingTitle}>{t('notifications.email')}</Text>
                 <Text style={styles.settingDescription}>
-                  Recevoir des notifications par email
+                  {t('notifications.emailDesc')}
                 </Text>
               </View>
             </View>
@@ -82,15 +84,15 @@ export default function NotificationsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Types de notifications</Text>
+          <Text style={styles.sectionTitle}>{t('notifications.types')}</Text>
           
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <MessageSquare size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Nouvelles demandes</Text>
+                <Text style={styles.settingTitle}>{t('notifications.newRequests')}</Text>
                 <Text style={styles.settingDescription}>
-                  Alertes pour les nouvelles demandes d&apos;envoi
+                  {t('notifications.newRequestsDesc')}
                 </Text>
               </View>
             </View>
@@ -106,9 +108,9 @@ export default function NotificationsScreen() {
             <View style={styles.settingLeft}>
               <MessageSquare size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Messages</Text>
+                <Text style={styles.settingTitle}>{t('notifications.messages')}</Text>
                 <Text style={styles.settingDescription}>
-                  Notifications pour les nouveaux messages
+                  {t('notifications.messagesDesc')}
                 </Text>
               </View>
             </View>
@@ -124,9 +126,9 @@ export default function NotificationsScreen() {
             <View style={styles.settingLeft}>
               <Package size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Suivi des envois</Text>
+                <Text style={styles.settingTitle}>{t('notifications.shipmentTracking')}</Text>
                 <Text style={styles.settingDescription}>
-                  Mises à jour sur l&apos;état de vos colis
+                  {t('notifications.shipmentTrackingDesc')}
                 </Text>
               </View>
             </View>
@@ -142,9 +144,9 @@ export default function NotificationsScreen() {
             <View style={styles.settingLeft}>
               <Star size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Avis et notes</Text>
+                <Text style={styles.settingTitle}>{t('notifications.reviews')}</Text>
                 <Text style={styles.settingDescription}>
-                  Notifications pour les nouveaux avis
+                  {t('notifications.reviewsDesc')}
                 </Text>
               </View>
             </View>
@@ -159,7 +161,7 @@ export default function NotificationsScreen() {
 
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>
-            💡 Vous pouvez personnaliser vos préférences de notification à tout moment. Les notifications vous aident à rester informé de l&apos;activité importante.
+            {t('notifications.info')}
           </Text>
         </View>
       </ScrollView>

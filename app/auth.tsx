@@ -15,13 +15,15 @@ import { LogIn, UserPlus, Phone, MapPin, User as UserIcon, Lock } from 'lucide-r
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type AuthMode = 'login' | 'signup';
 
 export default function AuthScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { saveUserProfile, loginUser, createProfile } = useUser();
+  const { loginUser, createProfile } = useUser();
+  const { t } = useLanguage();
   const [mode, setMode] = useState<AuthMode>('login');
   const [contact, setContact] = useState('');
   const [password, setPassword] = useState('');
@@ -119,7 +121,7 @@ export default function AuthScreen() {
           style={[styles.header, { paddingTop: insets.top + 40 }]}
         >
           <Text style={styles.logo}>GP Connect</Text>
-          <Text style={styles.tagline}>Connecter l&apos;Afrique au monde</Text>
+          <Text style={styles.tagline}>{t('auth.connectingAfrica')}</Text>
         </LinearGradient>
 
         <View style={styles.formContainer}>
@@ -130,7 +132,7 @@ export default function AuthScreen() {
             >
               <LogIn size={20} color={mode === 'login' ? '#FF6B35' : '#6C757D'} />
               <Text style={[styles.modeButtonText, mode === 'login' && styles.modeButtonTextActive]}>
-                Connexion
+                {t('auth.login')}
               </Text>
             </TouchableOpacity>
             
@@ -140,7 +142,7 @@ export default function AuthScreen() {
             >
               <UserPlus size={20} color={mode === 'signup' ? '#FF6B35' : '#6C757D'} />
               <Text style={[styles.modeButtonText, mode === 'signup' && styles.modeButtonTextActive]}>
-                Inscription
+                {t('auth.signup')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -152,7 +154,7 @@ export default function AuthScreen() {
               </View>
               <TextInput
                 style={styles.input}
-                placeholder="Email ou Téléphone"
+                placeholder={t('auth.emailOrPhone')}
                 value={contact}
                 onChangeText={setContact}
                 autoCapitalize="none"
@@ -167,7 +169,7 @@ export default function AuthScreen() {
               </View>
               <TextInput
                 style={styles.input}
-                placeholder="Mot de passe"
+                placeholder={t('auth.password')}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -184,7 +186,7 @@ export default function AuthScreen() {
                   </View>
                   <TextInput
                     style={styles.input}
-                    placeholder="Prénom"
+                    placeholder={t('auth.firstName')}
                     value={firstName}
                     onChangeText={setFirstName}
                     placeholderTextColor="#999"
@@ -197,7 +199,7 @@ export default function AuthScreen() {
                   </View>
                   <TextInput
                     style={styles.input}
-                    placeholder="Nom"
+                    placeholder={t('auth.lastName')}
                     value={lastName}
                     onChangeText={setLastName}
                     placeholderTextColor="#999"
@@ -210,7 +212,7 @@ export default function AuthScreen() {
                   </View>
                   <TextInput
                     style={styles.input}
-                    placeholder="Pays"
+                    placeholder={t('auth.country')}
                     value={country}
                     onChangeText={setCountry}
                     placeholderTextColor="#999"
@@ -235,10 +237,10 @@ export default function AuthScreen() {
                 )}
                 <Text style={styles.submitButtonText}>
                   {loading
-                    ? 'Chargement...'
+                    ? t('auth.loading')
                     : mode === 'login'
-                    ? 'Se connecter'
-                    : 'Créer un compte'}
+                    ? t('auth.signIn')
+                    : t('auth.createAccount')}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -246,7 +248,7 @@ export default function AuthScreen() {
             {mode === 'signup' && (
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>
-                  En créant un compte, vous pourrez publier des demandes d&apos;envoi de colis gratuitement.
+                  {t('auth.createAccountInfo')}
                 </Text>
               </View>
             )}
@@ -254,7 +256,7 @@ export default function AuthScreen() {
             {mode === 'login' && (
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>
-                  Entrez votre email/téléphone et mot de passe pour vous connecter.
+                  {t('auth.loginInfo')}
                 </Text>
               </View>
             )}
@@ -264,7 +266,7 @@ export default function AuthScreen() {
             style={styles.skipButton}
             onPress={() => router.replace('/(tabs)')}
           >
-            <Text style={styles.skipButtonText}>Continuer sans compte</Text>
+            <Text style={styles.skipButtonText}>{t('auth.continueWithoutAccount')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

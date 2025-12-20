@@ -20,11 +20,13 @@ import {
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '@/contexts/UserContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { clearUserProfile } = useUser();
+  const { language, changeLanguage, t } = useLanguage();
   
   const [darkMode, setDarkMode] = useState(false);
   const [autoDownload, setAutoDownload] = useState(true);
@@ -68,7 +70,7 @@ export default function SettingsScreen() {
       <Stack.Screen
         options={{
           headerShown: true,
-          headerTitle: 'Paramètres',
+          headerTitle: t('settings.title'),
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color="#2C3E50" />
@@ -83,15 +85,15 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Apparence</Text>
+          <Text style={styles.sectionTitle}>{t('settings.appearance')}</Text>
           
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <Moon size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Mode sombre</Text>
+                <Text style={styles.settingTitle}>{t('settings.darkMode')}</Text>
                 <Text style={styles.settingDescription}>
-                  Activer le thème sombre
+                  {t('settings.darkModeDesc')}
                 </Text>
               </View>
             </View>
@@ -103,27 +105,38 @@ export default function SettingsScreen() {
             />
           </View>
 
-          <TouchableOpacity style={styles.settingItem}>
+          <TouchableOpacity 
+            style={styles.settingItem}
+            onPress={() => {
+              const newLang = language === 'fr' ? 'en' : 'fr';
+              changeLanguage(newLang);
+            }}
+          >
             <View style={styles.settingLeft}>
               <Globe size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Langue</Text>
-                <Text style={styles.settingDescription}>Français</Text>
+                <Text style={styles.settingTitle}>{t('settings.language')}</Text>
+                <Text style={styles.settingDescription}>
+                  {language === 'fr' ? t('settings.languageFrench') : t('settings.languageEnglish')}
+                </Text>
               </View>
+            </View>
+            <View style={styles.languageBadge}>
+              <Text style={styles.languageBadgeText}>{language.toUpperCase()}</Text>
             </View>
           </TouchableOpacity>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Données et stockage</Text>
+          <Text style={styles.sectionTitle}>{t('settings.dataStorage')}</Text>
           
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <Download size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Téléchargement automatique</Text>
+                <Text style={styles.settingTitle}>{t('settings.autoDownload')}</Text>
                 <Text style={styles.settingDescription}>
-                  Télécharger automatiquement les images
+                  {t('settings.autoDownloadDesc')}
                 </Text>
               </View>
             </View>
@@ -139,9 +152,9 @@ export default function SettingsScreen() {
             <View style={styles.settingLeft}>
               <Trash2 size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Vider le cache</Text>
+                <Text style={styles.settingTitle}>{t('settings.clearCache')}</Text>
                 <Text style={styles.settingDescription}>
-                  Libérer de l&apos;espace de stockage
+                  {t('settings.clearCacheDesc')}
                 </Text>
               </View>
             </View>
@@ -149,7 +162,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Confidentialité et sécurité</Text>
+          <Text style={styles.sectionTitle}>{t('settings.privacySecurity')}</Text>
           
           <TouchableOpacity 
             style={styles.settingItem}
@@ -158,9 +171,9 @@ export default function SettingsScreen() {
             <View style={styles.settingLeft}>
               <Shield size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Politique de confidentialité</Text>
+                <Text style={styles.settingTitle}>{t('settings.privacyPolicy')}</Text>
                 <Text style={styles.settingDescription}>
-                  Voir notre politique de confidentialité
+                  {t('settings.privacyPolicyDesc')}
                 </Text>
               </View>
             </View>
@@ -170,9 +183,9 @@ export default function SettingsScreen() {
             <View style={styles.settingLeft}>
               <Lock size={20} color="#FF6B35" />
               <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>Sécurité du compte</Text>
+                <Text style={styles.settingTitle}>{t('settings.accountSecurity')}</Text>
                 <Text style={styles.settingDescription}>
-                  Gérer la sécurité de votre compte
+                  {t('settings.accountSecurityDesc')}
                 </Text>
               </View>
             </View>
@@ -180,7 +193,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Zone dangereuse</Text>
+          <Text style={styles.sectionTitle}>{t('settings.dangerZone')}</Text>
           
           <TouchableOpacity 
             style={[styles.settingItem, styles.dangerItem]}
@@ -190,10 +203,10 @@ export default function SettingsScreen() {
               <Trash2 size={20} color="#DC3545" />
               <View style={styles.settingText}>
                 <Text style={[styles.settingTitle, styles.dangerText]}>
-                  Supprimer le compte
+                  {t('settings.deleteAccount')}
                 </Text>
                 <Text style={styles.settingDescription}>
-                  Supprimer définitivement votre compte
+                  {t('settings.deleteAccountDesc')}
                 </Text>
               </View>
             </View>
@@ -202,7 +215,7 @@ export default function SettingsScreen() {
 
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>
-            ⚠️ La suppression de votre compte est irréversible. Toutes vos données seront définitivement supprimées.
+            {t('settings.deleteWarning')}
           </Text>
         </View>
       </ScrollView>
@@ -273,6 +286,17 @@ const styles = StyleSheet.create({
   },
   dangerText: {
     color: '#DC3545',
+  },
+  languageBadge: {
+    backgroundColor: '#FF6B35',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  languageBadgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: '600',
   },
   infoBox: {
     backgroundColor: '#FFF5F5',
